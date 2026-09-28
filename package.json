@@ -2,7 +2,7 @@
   "name": "aimex-fest-registration",
   "version": "1.0.0",
   "description": "Modern event registration platform for AIMEX 2026 department fest",
-  "main": "index.html",
+  "main": "server.js",
   "scripts": {
     "start": "node server.js",
     "serve": "powershell -ExecutionPolicy Bypass -File server.ps1"
