@@ -5,7 +5,8 @@
   "main": "server.js",
   "scripts": {
     "start": "node server.js",
-    "serve": "powershell -ExecutionPolicy Bypass -File server.ps1"
+    "serve": "powershell -ExecutionPolicy Bypass -File server.ps1",
+    "dev": "node --watch server.js"
   },
   "keywords": [
     "event",
@@ -21,5 +22,9 @@
     "type": "git",
     "url": "https://github.com/yourusername/aimex-fest.git"
   },
-  "homepage": "https://github.com/yourusername/aimex-fest#readme"
+  "homepage": "https://github.com/yourusername/aimex-fest#readme",
+  "dependencies": {
+    "dotenv": "^16.4.7",
+    "mongoose": "^8.8.4"
+  }
 }
