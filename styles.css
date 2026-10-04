@@ -603,8 +603,9 @@ header.top {
 .hero-watermark {
   position: absolute;
   left: 0;
-  bottom: -10px;
+  top: 50%;
   width: 100%;
+  transform: translateY(-50%);
   font-family: "Bricolage Grotesque", sans-serif;
   font-weight: 900;
   font-size: clamp(64px, 18vw, 260px);
