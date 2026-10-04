@@ -645,6 +645,114 @@ function renderTimeline() {
     .join('');
 }
 
+/* ---- Admin Dashboard ---- */
+async function loadAdminDashboard() {
+  const statsWrap = $('#adminStats');
+  const tableBody = $('#adminTableBody');
+  const eventFilter = $('#adminEventFilter');
+  const statusFilter = $('#adminStatusFilter');
+  const queryInput = $('#adminSearch');
+
+  if (!statsWrap || !tableBody || !eventFilter || !statusFilter || !queryInput) return;
+
+  const eventOptions = EVENTS.map(
+    e => `<option value="${e.id}">${esc(e.name)}</option>`
+  ).join('');
+
+  if (eventFilter.children.length <= 1) {
+    eventFilter.insertAdjacentHTML('beforeend', eventOptions);
+  }
+
+  try {
+    const [statsRes, regsRes] = await Promise.all([
+      fetch('/api/admin/stats'),
+      fetch(`/api/admin/registrations?eventId=${encodeURIComponent(eventFilter.value || 'all')}`)
+    ]);
+
+    if (!statsRes.ok || !regsRes.ok) {
+      throw new Error('Unable to load admin data');
+    }
+
+    const statsData = await statsRes.json();
+    const regsData = await regsRes.json();
+    const registrations = regsData.registrations || [];
+
+    const stats = [
+      { label: 'Total Registrations', value: statsData.totalRegistrations ?? registrations.length },
+      { label: 'Confirmed', value: statsData.confirmedCount ?? registrations.filter(r => /confirmed/i.test(r.status || '')).length },
+      { label: 'Checked In', value: statsData.checkedInCount ?? registrations.filter(r => r.checkedIn).length },
+      { label: 'Total Revenue', value: `₹${Number(statsData.totalRevenue || 0).toLocaleString('en-IN')}` }
+    ];
+
+    statsWrap.innerHTML = stats
+      .map(
+        item => `
+          <div class="admin-stat">
+            <span class="admin-stat-label">${item.label}</span>
+            <span class="admin-stat-value">${item.value}</span>
+          </div>`
+      )
+      .join('');
+
+    const filtered = registrations.filter(r => {
+      const selectedEvent = eventFilter.value || 'all';
+      const selectedStatus = statusFilter.value || 'all';
+      const search = queryInput.value.trim().toLowerCase();
+
+      const eventMatch = selectedEvent === 'all' || r.eventId === selectedEvent;
+      const statusMatch =
+        selectedStatus === 'all' ||
+        (selectedStatus === 'Payment Pending' && /payment pending/i.test(r.status || '')) ||
+        (selectedStatus === 'Confirmed' && /confirmed/i.test(r.status || '')) ||
+        (selectedStatus === 'Checked In' && !!r.checkedIn);
+
+      const searchMatch =
+        !search ||
+        [r.name, r.email, r.roll, r.id, r.utr, r.eventName].some(value =>
+          String(value || '').toLowerCase().includes(search)
+        );
+
+      return eventMatch && statusMatch && searchMatch;
+    });
+
+    if (!filtered.length) {
+      tableBody.innerHTML = '<tr><td colspan="7" class="admin-empty">No registration records found for the selected filters.</td></tr>';
+      return;
+    }
+
+    tableBody.innerHTML = filtered
+      .slice(0, 100)
+      .map(r => {
+        const status = /confirmed/i.test(r.status || '')
+          ? 'confirmed'
+          : /payment pending/i.test(r.status || '')
+          ? 'pending'
+          : 'checked-in';
+
+        return `
+          <tr>
+            <td><strong>${esc(r.id || '—')}</strong></td>
+            <td>${esc(r.eventName || 'Unknown')}</td>
+            <td>${esc(r.name || '—')}<br><small>${esc(r.email || '')}</small></td>
+            <td>${esc(r.roll || '—')}</td>
+            <td><span class="status-pill ${status}">${esc(r.status || 'Pending')}</span></td>
+            <td>₹${Number(r.fee || 0).toLocaleString('en-IN')}</td>
+            <td>${esc(r.utr || '—')}</td>
+          </tr>
+        `;
+      })
+      .join('');
+  } catch (error) {
+    statsWrap.innerHTML = '<div class="admin-empty">Admin data is not available right now. Start the backend server and try again.</div>';
+    tableBody.innerHTML = '<tr><td colspan="7" class="admin-empty">No data loaded.</td></tr>';
+  }
+}
+
+function openAdminDashboard() {
+  show('v-admin');
+  loadAdminDashboard();
+}
+
 /* ---- Rules & Prizes Modal ---- */
 function openRulesModal(id) {
   const e = ev(id);
@@ -1167,6 +1275,13 @@ document.addEventListener('DOMContentLoaded', () => {
     $('#evList').hidden = true;
     $('#timelineList').hidden = false;
   });
+
+  // Admin dashboard controls
+  $('#adminBtn').addEventListener('click', openAdminDashboard);
+  $('#adminRefreshBtn').addEventListener('click', loadAdminDashboard);
+  $('#adminEventFilter').addEventListener('change', loadAdminDashboard);
+  $('#adminStatusFilter').addEventListener('change', loadAdminDashboard);
+  $('#adminSearch').addEventListener('input', loadAdminDashboard);
 
   // Global delegation
   document.addEventListener('click', e => {

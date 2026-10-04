@@ -480,6 +480,17 @@ header.top {
   gap: 10px;
 }
 
+.admin-toggle {
+  background: var(--brand-light);
+  color: var(--brand);
+  border: 1px solid var(--brand);
+  border-radius: var(--radius-md);
+  min-height: 38px;
+  padding: 0 14px;
+  font-weight: 700;
+  cursor: pointer;
+}
+
 .theme-toggle {
   background: var(--bg);
   border: 1px solid var(--line);
@@ -941,6 +952,124 @@ main {
   display: grid;
   gap: 20px;
   grid-template-columns: 1fr;
+}
+
+.admin-toolbar {
+  display: flex;
+  gap: 12px;
+  flex-wrap: wrap;
+  margin-bottom: 20px;
+}
+
+.admin-toolbar select,
+.admin-toolbar input {
+  min-height: 42px;
+  border: 1px solid var(--line);
+  border-radius: var(--radius-md);
+  background: var(--surface);
+  color: var(--ink);
+  padding: 0 12px;
+  font: inherit;
+}
+
+.admin-toolbar input {
+  flex: 1;
+  min-width: 220px;
+}
+
+.admin-stats {
+  display: grid;
+  gap: 16px;
+  grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+  margin-bottom: 22px;
+}
+
+.admin-stat {
+  background: var(--surface);
+  border: 1px solid var(--line);
+  border-radius: var(--radius-lg);
+  padding: 18px;
+  box-shadow: var(--shadow-sm);
+}
+
+.admin-stat-label {
+  color: var(--muted);
+  font-size: 12px;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+}
+
+.admin-stat-value {
+  display: block;
+  margin-top: 8px;
+  font-size: clamp(24px, 3vw, 34px);
+  font-weight: 800;
+  font-family: "Bricolage Grotesque", sans-serif;
+}
+
+.table-wrap {
+  overflow-x: auto;
+  background: var(--surface);
+  border: 1px solid var(--line);
+  border-radius: var(--radius-lg);
+  box-shadow: var(--shadow-sm);
+}
+
+.admin-table {
+  width: 100%;
+  border-collapse: collapse;
+  min-width: 860px;
+}
+
+.admin-table th,
+.admin-table td {
+  padding: 14px 16px;
+  border-bottom: 1px solid var(--line);
+  text-align: left;
+  vertical-align: top;
+}
+
+.admin-table th {
+  font-size: 12px;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--muted);
+  background: var(--surface-card);
+}
+
+.admin-table td {
+  color: var(--ink-secondary);
+}
+
+.admin-table .status-pill {
+  display: inline-flex;
+  align-items: center;
+  border-radius: var(--radius-full);
+  padding: 5px 10px;
+  font-size: 12px;
+  font-weight: 700;
+  background: var(--brand-light);
+  color: var(--brand);
+}
+
+.admin-table .status-pill.pending {
+  background: var(--warn-bg);
+  color: var(--warn);
+}
+
+.admin-table .status-pill.confirmed {
+  background: var(--ok-bg);
+  color: var(--ok);
+}
+
+.admin-table .status-pill.checked-in {
+  background: rgba(32, 201, 151, 0.12);
+  color: #0f9f6e;
+}
+
+.admin-empty {
+  padding: 20px;
+  color: var(--muted);
 }
 
 .rules-section {

@@ -81,6 +81,7 @@
       </button>
 
       <div class="header-actions">
+        <button class="admin-toggle" id="adminBtn" aria-label="Open admin dashboard">Admin</button>
         <button class="theme-toggle" id="themeBtn" aria-label="Toggle light and dark mode" title="Toggle theme">
           <span id="themeIcon">🌙</span>
         </button>
@@ -249,6 +250,50 @@
               <li>Final results and decisions by judges are considered binding.</li>
             </ul>
           </article>
+        </div>
+      </section>
+
+      <!-- Admin Dashboard -->
+      <section class="view" id="v-admin" hidden>
+        <div class="sec-h">
+          <div>
+            <h2 id="adminHeading">Admin Dashboard</h2>
+            <p>Review registrations, monitor payment status, and export event data.</p>
+          </div>
+        </div>
+
+        <div class="admin-toolbar">
+          <select id="adminEventFilter" aria-label="Filter registrations by event">
+            <option value="all">All Events</option>
+          </select>
+          <select id="adminStatusFilter" aria-label="Filter registrations by status">
+            <option value="all">All Status</option>
+            <option value="Payment Pending">Payment Pending</option>
+            <option value="Confirmed">Confirmed</option>
+            <option value="Checked In">Checked In</option>
+          </select>
+          <input id="adminSearch" type="search" placeholder="Search by name, roll, email, ticket ID..." aria-label="Search registrations">
+          <button class="btn sm" id="adminRefreshBtn">Refresh</button>
+          <a class="btn sm ghost" href="/api/admin/export" target="_blank" rel="noreferrer">Export CSV</a>
+        </div>
+
+        <div class="admin-stats" id="adminStats"></div>
+
+        <div class="table-wrap">
+          <table class="admin-table">
+            <thead>
+              <tr>
+                <th>Ticket ID</th>
+                <th>Event</th>
+                <th>Participant</th>
+                <th>Roll</th>
+                <th>Status</th>
+                <th>Fee</th>
+                <th>UTR</th>
+              </tr>
+            </thead>
+            <tbody id="adminTableBody"></tbody>
+          </table>
         </div>
       </section>
 
