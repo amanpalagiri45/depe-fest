@@ -7,8 +7,8 @@
   'use strict';
 
   function initNeuralBackground() {
-    const hero = document.getElementById('hero');
-    if (!hero) return;
+    const background = document.querySelector('.site-bg');
+    if (!background) return;
 
     let canvas = document.getElementById('neuralCanvas');
     if (!canvas) {
@@ -16,7 +16,7 @@
       canvas.id = 'neuralCanvas';
       canvas.className = 'neural-canvas';
       canvas.setAttribute('aria-hidden', 'true');
-      hero.prepend(canvas);
+      background.append(canvas);
     }
 
     const ctx = canvas.getContext('2d');
@@ -28,7 +28,7 @@
     let animationId = null;
     let isVisible = true;
 
-    // Mouse coordinates relative to hero
+    // Mouse coordinates relative to the fixed page background
     const mouse = { x: -1000, y: -1000, active: false, radius: 150 };
 
     // Configuration
@@ -37,7 +37,7 @@
     let pulses = [];
 
     function resize() {
-      const rect = hero.getBoundingClientRect();
+      const rect = background.getBoundingClientRect();
       width = rect.width;
       height = rect.height;
       dpr = window.devicePixelRatio || 1;
@@ -219,37 +219,37 @@
     }
 
     // Mouse Listeners
-    hero.addEventListener('mousemove', e => {
-      const rect = hero.getBoundingClientRect();
+    window.addEventListener('mousemove', e => {
+      const rect = background.getBoundingClientRect();
       mouse.x = e.clientX - rect.left;
       mouse.y = e.clientY - rect.top;
       mouse.active = true;
     });
 
-    hero.addEventListener('mouseleave', () => {
+    window.addEventListener('blur', () => {
       mouse.active = false;
       mouse.x = -1000;
       mouse.y = -1000;
     });
 
     // Touch support for tablets & mobile
-    hero.addEventListener('touchmove', e => {
+    window.addEventListener('touchmove', e => {
       if (e.touches.length > 0) {
-        const rect = hero.getBoundingClientRect();
+        const rect = background.getBoundingClientRect();
         mouse.x = e.touches[0].clientX - rect.left;
         mouse.y = e.touches[0].clientY - rect.top;
         mouse.active = true;
       }
     }, { passive: true });
 
-    hero.addEventListener('touchend', () => {
+    window.addEventListener('touchend', () => {
       mouse.active = false;
     });
 
     // Performance & Lifecycle
     window.addEventListener('resize', resize, { passive: true });
 
-    // Pause when hero is offscreen
+    // Pause the animation when the page background is offscreen
     if ('IntersectionObserver' in window) {
       const observer = new IntersectionObserver(entries => {
         entries.forEach(entry => {
@@ -262,7 +262,7 @@
           }
         });
       }, { threshold: 0.1 });
-      observer.observe(hero);
+      observer.observe(background);
     }
 
     document.addEventListener('visibilitychange', () => {

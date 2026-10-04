@@ -26,6 +26,7 @@
   --gold: #D4AF37;
   --silver: #94A3B8;
   --bronze: #B45309;
+  --page-backdrop: linear-gradient(180deg, #F0F2FA 0%, #E9EDF8 100%);
   --shadow-sm: 0 2px 6px rgba(7, 9, 26, 0.06);
   --shadow-md: 0 8px 24px rgba(7, 9, 26, 0.10);
   --shadow-lg: 0 16px 36px rgba(7, 9, 26, 0.14);
@@ -37,7 +38,7 @@
 }
 
 [data-theme="dark"] {
-  --bg: #05060F;
+  --bg: #05080D;
   --surface: #0B0D1E;
   --surface-raised: #111330;
   --surface-card: #0D1028;
@@ -51,7 +52,8 @@
   --brand-hover: #7AA4FF;
   --on-brand: #030820;
   --brand-glow: 0 0 24px rgba(91, 139, 255, 0.45);
-  --hero: radial-gradient(ellipse 80% 60% at 60% -10%, rgba(212, 175, 55, 0.25) 0%, transparent 55%), radial-gradient(ellipse 60% 50% at 90% 60%, rgba(91, 139, 255, 0.22) 0%, transparent 55%), linear-gradient(180deg, #03040E 0%, #080B28 55%, #05060F 100%);
+  --page-backdrop: radial-gradient(ellipse 75% 45% at 82% 0%, rgba(0, 137, 102, 0.16) 0%, transparent 72%), radial-gradient(ellipse 65% 55% at 8% 46%, rgba(23, 55, 83, 0.15) 0%, transparent 72%), linear-gradient(180deg, #05080D 0%, #071018 54%, #05080D 100%);
+  --hero: linear-gradient(115deg, rgba(3, 8, 13, 0.42), rgba(4, 10, 20, 0.34));
   --hero-text: #FFFFFF;
   --hero-glass: rgba(91, 139, 255, 0.07);
   --hero-glass-border: rgba(212, 175, 55, 0.30);
@@ -85,7 +87,8 @@
     --brand-hover: #7AA4FF;
     --on-brand: #030820;
     --brand-glow: 0 0 24px rgba(91, 139, 255, 0.45);
-    --hero: radial-gradient(ellipse 80% 60% at 60% -10%, rgba(212, 175, 55, 0.25) 0%, transparent 55%), radial-gradient(ellipse 60% 50% at 90% 60%, rgba(91, 139, 255, 0.22) 0%, transparent 55%), linear-gradient(180deg, #03040E 0%, #080B28 55%, #05060F 100%);
+    --page-backdrop: radial-gradient(ellipse 75% 45% at 82% 0%, rgba(0, 137, 102, 0.16) 0%, transparent 72%), radial-gradient(ellipse 65% 55% at 8% 46%, rgba(23, 55, 83, 0.15) 0%, transparent 72%), linear-gradient(180deg, #05080D 0%, #071018 54%, #05080D 100%);
+    --hero: linear-gradient(115deg, rgba(3, 8, 13, 0.42), rgba(4, 10, 20, 0.34));
     --hero-text: #FFFFFF;
     --hero-glass: rgba(91, 139, 255, 0.07);
     --hero-glass-border: rgba(212, 175, 55, 0.30);
@@ -114,7 +117,7 @@ html {
 
 body {
   margin: 0;
-  background: var(--bg);
+  background: var(--page-backdrop);
   color: var(--ink);
   font: 400 16px/1.55 "DM Sans", system-ui, -apple-system, sans-serif;
   transition: background-color 0.25s ease, color 0.25s ease;
@@ -133,14 +136,15 @@ body {
   pointer-events: none;
   overflow: hidden;
   user-select: none;
+  background: var(--page-backdrop);
 }
 
 .bg-grid {
   position: absolute;
   inset: 0;
   background-image: radial-gradient(var(--line-strong) 1px, transparent 1px);
-  background-size: 34px 34px;
-  opacity: 0.22;
+  background-size: 42px 42px;
+  opacity: 0.08;
   mask-image: radial-gradient(ellipse 90% 90% at 50% 50%, black 50%, transparent 90%);
   -webkit-mask-image: radial-gradient(ellipse 90% 90% at 50% 50%, black 50%, transparent 90%);
 }
@@ -157,8 +161,8 @@ body {
   right: -10%;
   width: 620px;
   height: 620px;
-  background: radial-gradient(circle, rgba(212, 175, 55, 0.22) 0%, rgba(26, 60, 200, 0.12) 50%, transparent 70%);
-  opacity: 0.7;
+  background: radial-gradient(circle, rgba(0, 190, 138, 0.12) 0%, rgba(20, 63, 69, 0.1) 48%, transparent 70%);
+  opacity: 0.55;
   animation: glowPulse 8s ease-in-out infinite alternate;
 }
 
@@ -167,8 +171,8 @@ body {
   left: -10%;
   width: 680px;
   height: 680px;
-  background: radial-gradient(circle, rgba(26, 60, 200, 0.22) 0%, rgba(91, 40, 180, 0.12) 50%, transparent 70%);
-  opacity: 0.6;
+  background: radial-gradient(circle, rgba(25, 91, 119, 0.12) 0%, rgba(0, 112, 91, 0.07) 50%, transparent 70%);
+  opacity: 0.45;
   animation: glowPulse 10s ease-in-out infinite alternate-reverse;
 }
 
@@ -588,13 +592,12 @@ header.top {
 
 .neural-canvas {
   position: absolute;
-  top: 0;
-  left: 0;
+  inset: 0;
   width: 100%;
   height: 100%;
-  z-index: 0;
+  z-index: 1;
   pointer-events: none;
-  opacity: 0.9;
+  opacity: 0.48;
 }
 
 .hero-watermark {
@@ -801,8 +804,8 @@ main {
   z-index: 1;
 }
 
-.view[hidden] {
-  display: none;
+[hidden] {
+  display: none !important;
 }
 
 .sec-h {
@@ -1199,6 +1202,31 @@ main {
   margin: 0;
   color: var(--ink-secondary);
   font-size: 14.5px;
+}
+
+.ev-meta {
+  display: grid;
+  gap: 7px;
+  margin-top: 2px;
+  color: var(--ink-secondary);
+  font-size: 13px;
+}
+
+.ev-meta-item {
+  display: flex;
+  align-items: flex-start;
+  gap: 8px;
+  min-width: 0;
+  line-height: 1.4;
+}
+
+.ev-meta-item > span:first-child {
+  flex: 0 0 18px;
+  text-align: center;
+}
+
+.ev-meta-item > span:last-child {
+  overflow-wrap: anywhere;
 }
 
 .chips {

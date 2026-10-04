@@ -604,6 +604,11 @@ function renderEvents() {
         </div>
         <h3>${e.name}</h3>
         <p>${e.desc}</p>
+        <div class="ev-meta">
+          <div class="ev-meta-item"><span aria-hidden="true">📅</span><span>${esc(fmtD(e.date))} · ${esc(fmtT(e.date))}</span></div>
+          <div class="ev-meta-item"><span aria-hidden="true">📍</span><span>${esc(e.venue)}</span></div>
+          <div class="ev-meta-item"><span aria-hidden="true">👥</span><span>${esc(teamTxt(e))}</span></div>
+        </div>
         <div class="foot">
           <div class="price">₹${e.fee} <small>${unit(e)}</small></div>
           <div class="ev-actions">
@@ -635,6 +640,11 @@ function renderTimeline() {
         <div class="timeline-card" style="--c:${e.c}">
           <h3 style="margin:2px 0">${e.name}</h3>
           <p style="margin:0;color:var(--muted);font-size:14px">${e.desc}</p>
+          <div class="ev-meta">
+            <div class="ev-meta-item"><span aria-hidden="true">📅</span><span>${esc(fmtD(e.date))} · ${esc(fmtT(e.date))}</span></div>
+            <div class="ev-meta-item"><span aria-hidden="true">📍</span><span>${esc(e.venue)}</span></div>
+            <div class="ev-meta-item"><span aria-hidden="true">👥</span><span>${esc(teamTxt(e))}</span></div>
+          </div>
           <div style="display:flex;justify-content:space-between;align-items:center;margin-top:6px">
             <span style="font-weight:700">₹${e.fee} (${unit(e)})</span>
             <div class="ev-actions"></div>
