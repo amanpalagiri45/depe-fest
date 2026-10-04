@@ -18,7 +18,7 @@ const EVENTS = [
     desc: 'Three hours, eight algorithmic problems, one live leaderboard. Solo or in pairs. Battle against the best coders on campus.',
     date: '2026-10-30T11:30',
     venue: 'Lab 2',
-    fee: 100,
+    fee: 50,
     min: 1,
     max: 2,
     c: '#2B3AE7',
@@ -54,7 +54,7 @@ const EVENTS = [
     desc: 'Build a working web/mobile or AI prototype in four hours around a surprise theme revealed at kickoff. Pitch live to judges.',
     date: '2026-10-30T09:30',
     venue: 'Seminar Hall',
-    fee: 300,
+    fee: 50,
     min: 2,
     max: 4,
     c: '#F2545B',
@@ -125,7 +125,7 @@ const EVENTS = [
     desc: 'High-octane 5v5 knockout tournament on high-spec lab PCs. Bring your A-game, team synergy, and competitive spirit.',
     date: '2026-10-30T12:30',
     venue: 'Gaming Lab',
-    fee: 200,
+    fee: 50,
     min: 4,
     max: 5,
     c: '#0FA3B1',
@@ -160,7 +160,7 @@ const EVENTS = [
     desc: 'Redesign a real broken campus mobile or web app screen in 90 minutes. Present your visual hierarchy, user flow, and design rationale to judges.',
     date: '2026-10-30T15:00',
     venue: 'Lab 3',
-    fee: 100,
+    fee: 50,
     min: 1,
     max: 1,
     c: '#7A4DFF',
@@ -186,6 +186,221 @@ const EVENTS = [
       label: 'Primary design tool you will use',
       type: 'select',
       opts: ['Figma', 'Adobe XD', 'Penpot', 'Sketch', 'Other']
+    }
+  },
+  {
+    id: 'debate',
+    name: 'Campus Debate Clash',
+    tag: 'Public Speaking',
+    category: 'nontech',
+    desc: 'A high-energy speaking challenge where teams argue, rebut, and persuade with clarity, confidence, and composure.',
+    date: '2026-10-30T09:00',
+    venue: 'Auditorium',
+    fee: 50,
+    min: 2,
+    max: 3,
+    c: '#FF6B6B',
+    on: '#ffffff',
+    slotsLeft: 10,
+    prizes: [
+      { place: '1st Prize', amount: '₹3,000', rank: 'gold' },
+      { place: '2nd Prize', amount: '₹2,000', rank: 'silver' },
+      { place: '3rd Prize', amount: '₹1,000', rank: 'bronze' }
+    ],
+    rules: [
+      'Teams of 2 to 3 members.',
+      'Participants must speak in a formal, respectful manner.',
+      'Judges may interrupt for rebuttal round and cross-questioning.',
+      'The topic will be announced 15 minutes before the round.'
+    ],
+    coordinators: [
+      { name: 'Aditi Nair', role: 'Debate Mentor', phone: '+91 98765 43220' },
+      { name: 'Kabir Iyer', role: 'Event Coordinator', phone: '+91 98765 43221' }
+    ],
+    extra: {
+      id: 'topic',
+      label: 'Preferred debate style',
+      type: 'select',
+      opts: ['Parliamentary', 'Turncoat', 'Extempore', 'Open House']
+    }
+  },
+  {
+    id: 'dance',
+    name: 'Groove Arena',
+    tag: 'Dance Battle',
+    category: 'nontech',
+    desc: 'Showcase your rhythm, stage presence, and creative choreography in an electrifying dance battle.',
+    date: '2026-10-30T11:00',
+    venue: 'Open Stage',
+    fee: 50,
+    min: 2,
+    max: 6,
+    c: '#FF9F43',
+    on: '#ffffff',
+    slotsLeft: 8,
+    prizes: [
+      { place: '1st Prize', amount: '₹4,500', rank: 'gold' },
+      { place: '2nd Prize', amount: '₹2,500', rank: 'silver' },
+      { place: '3rd Prize', amount: '₹1,500', rank: 'bronze' }
+    ],
+    rules: [
+      'Groups of 2 to 6 members only.',
+      'Music can be instrumental or song-based with a clear track cue.',
+      'No dangerous stunts, fire, or props that can harm performers.',
+      'Judging is based on choreography, confidence, and energy.'
+    ],
+    coordinators: [
+      { name: 'Rhea Kapoor', role: 'Dance Captain', phone: '+91 98765 43222' },
+      { name: 'Nikhil Joshi', role: 'Stage Lead', phone: '+91 98765 43223' }
+    ],
+    extra: {
+      id: 'danceStyle',
+      label: 'Dance style you will perform',
+      type: 'select',
+      opts: ['Hip-Hop', 'Bollywood', 'Contemporary', 'Fusion', 'Classical']
+    }
+  },
+  {
+    id: 'sing',
+    name: 'Melody Quest',
+    tag: 'Music & Singing',
+    category: 'nontech',
+    desc: 'From soulful vocals to energetic performances, bring your melody and sing your way to the spotlight.',
+    date: '2026-10-30T12:30',
+    venue: 'Main Stage',
+    fee: 50,
+    min: 1,
+    max: 2,
+    c: '#3ECF8E',
+    on: '#ffffff',
+    slotsLeft: 12,
+    prizes: [
+      { place: '1st Prize', amount: '₹3,500', rank: 'gold' },
+      { place: '2nd Prize', amount: '₹2,000', rank: 'silver' },
+      { place: '3rd Prize', amount: '₹1,250', rank: 'bronze' }
+    ],
+    rules: [
+      'Solo or duo participation.',
+      'Song duration should not exceed 3 minutes.',
+      'Backing tracks or karaoke allowed with prior check-in.',
+      'Original or cover songs are both permitted.'
+    ],
+    coordinators: [
+      { name: 'Sanjana Pillai', role: 'Music Lead', phone: '+91 98765 43224' },
+      { name: 'Yash Verma', role: 'Audio Coordinator', phone: '+91 98765 43225' }
+    ],
+    extra: {
+      id: 'genre',
+      label: 'Preferred music genre',
+      type: 'select',
+      opts: ['Classical', 'Bollywood', 'Rock', 'Indie', 'Western Pop']
+    }
+  },
+  {
+    id: 'art',
+    name: 'Canvas Canvas',
+    tag: 'Art & Craft',
+    category: 'nontech',
+    desc: 'Transform blank surfaces into vibrant expressions with your imagination, colours, and creative craft skills.',
+    date: '2026-10-30T10:00',
+    venue: 'Creative Studio',
+    fee: 50,
+    min: 1,
+    max: 2,
+    c: '#7C3AED',
+    on: '#ffffff',
+    slotsLeft: 14,
+    prizes: [
+      { place: '1st Prize', amount: '₹2,500', rank: 'gold' },
+      { place: '2nd Prize', amount: '₹1,500', rank: 'silver' },
+      { place: '3rd Prize', amount: '₹1,000', rank: 'bronze' }
+    ],
+    rules: [
+      'Individual or pair participation.',
+      'Bring your own materials or use provided craft essentials.',
+      'Original ideas and neat finish are encouraged.',
+      'Judging focuses on creativity, design, and presentation.'
+    ],
+    coordinators: [
+      { name: 'Devika Rao', role: 'Art Mentor', phone: '+91 98765 43228' },
+      { name: 'Vivek Nanda', role: 'Craft Coordinator', phone: '+91 98765 43229' }
+    ],
+    extra: {
+      id: 'medium',
+      label: 'Art medium you prefer',
+      type: 'select',
+      opts: ['Acrylic', 'Watercolor', 'Sketch', 'Mixed Media', 'Craft Paper']
+    }
+  },
+  {
+    id: 'photography',
+    name: 'Frame Story',
+    tag: 'Photography',
+    category: 'nontech',
+    desc: 'Capture compelling campus stories through a lens and show the world how moments become memories.',
+    date: '2026-10-30T15:30',
+    venue: 'Campus Trails',
+    fee: 50,
+    min: 1,
+    max: 1,
+    c: '#38BDF8',
+    on: '#ffffff',
+    slotsLeft: 9,
+    prizes: [
+      { place: '1st Prize', amount: '₹3,000', rank: 'gold' },
+      { place: '2nd Prize', amount: '₹2,000', rank: 'silver' },
+      { place: '3rd Prize', amount: '₹1,000', rank: 'bronze' }
+    ],
+    rules: [
+      'Solo participation only.',
+      'Submit 3 best shots on the theme announced at the venue.',
+      'Editing is allowed but should remain natural and honest.',
+      'Judging focuses on composition, story, and creativity.'
+    ],
+    coordinators: [
+      { name: 'Ishita Sen', role: 'Photography Lead', phone: '+91 98765 43230' },
+      { name: 'Aditya Menon', role: 'Media Coordinator', phone: '+91 98765 43231' }
+    ],
+    extra: {
+      id: 'camera',
+      label: 'Camera/device you will use',
+      type: 'select',
+      opts: ['DSLR', 'Mirrorless', 'Phone Camera', 'Action Camera', 'Other']
+    }
+  },
+  {
+    id: 'treasure',
+    name: 'Treasure Trail',
+    tag: 'Campus Adventure',
+    category: 'nontech',
+    desc: 'Follow clues, solve riddles, and race through the campus in a creative scavenger hunt filled with fun.',
+    date: '2026-10-30T13:00',
+    venue: 'Campus Grounds',
+    fee: 50,
+    min: 2,
+    max: 4,
+    c: '#F59E0B',
+    on: '#ffffff',
+    slotsLeft: 6,
+    prizes: [
+      { place: '1st Prize', amount: '₹4,000', rank: 'gold' },
+      { place: '2nd Prize', amount: '₹2,500', rank: 'silver' },
+      { place: '3rd Prize', amount: '₹1,500', rank: 'bronze' }
+    ],
+    rules: [
+      'Teams of 2 to 4 members.',
+      'All clues must be solved within the given time window.',
+      'Respect all campus spaces and avoid disturbing classes.',
+      'Team coordination and speed will influence final ranking.'
+    ],
+    coordinators: [
+      { name: 'Tanya Roy', role: 'Adventure Lead', phone: '+91 98765 43232' },
+      { name: 'Pranav Shah', role: 'Campus Guide', phone: '+91 98765 43233' }
+    ],
+    extra: {
+      id: 'teamName',
+      label: 'Team name',
+      type: 'text'
     }
   }
 ];
@@ -335,7 +550,8 @@ function initCountdown() {
 function show(id) {
   document.querySelectorAll('.view').forEach(v => (v.hidden = v.id !== id));
   $('#hero').hidden = id !== 'v-events';
-  $('#cnt').textContent = store.get().length;
+  const countEl = $('#cnt');
+  if (countEl) countEl.textContent = store.get().length;
   window.scrollTo({ top: 0, behavior: 'smooth' });
 
   const h = $('#' + id + ' h1, #' + id + ' h2');
@@ -381,27 +597,16 @@ function renderEvents() {
     .map(e => {
       const d = new Date(e.date);
       return `<article class="ev" style="--c:${e.c};--on:${e.on}">
-      <div class="stub">
-        <b>${d.getDate()}</b>
-        <span>${d.toLocaleDateString('en-IN', { month: 'short' })}</span>
-        <span>${d.toLocaleDateString('en-IN', { weekday: 'short' })}</span>
-      </div>
       <div class="body">
         <div class="ev-header">
           <span class="tag">${e.tag}</span>
-          ${e.slotsLeft ? `<span class="urgency-badge">🔥 Only ${e.slotsLeft} slots left</span>` : ''}
+          <span class="urgency-badge">Slots available</span>
         </div>
         <h3>${e.name}</h3>
         <p>${e.desc}</p>
-        <div class="chips">
-          <span>🕒 ${fmtT(e.date)}</span>
-          <span>📍 ${e.venue}</span>
-          <span>👥 ${teamTxt(e)}</span>
-        </div>
         <div class="foot">
           <div class="price">₹${e.fee} <small>${unit(e)}</small></div>
           <div class="ev-actions">
-            <button class="btn ghost sm" data-rules="${e.id}">Rules & Prizes</button>
             <button class="btn sm" data-reg="${e.id}" aria-label="Register for ${e.name}">Register</button>
           </div>
         </div>
@@ -428,18 +633,11 @@ function renderTimeline() {
       <div class="timeline-row">
         <div class="timeline-node" style="--brand:${e.c}"></div>
         <div class="timeline-card" style="--c:${e.c}">
-          <div class="timeline-top">
-            <span class="timeline-time-badge">${fmtT(e.date)}</span>
-            <span class="timeline-venue-badge">📍 ${e.venue}</span>
-          </div>
           <h3 style="margin:2px 0">${e.name}</h3>
           <p style="margin:0;color:var(--muted);font-size:14px">${e.desc}</p>
           <div style="display:flex;justify-content:space-between;align-items:center;margin-top:6px">
             <span style="font-weight:700">₹${e.fee} (${unit(e)})</span>
-            <div class="ev-actions">
-              <button class="btn ghost sm" data-rules="${e.id}">Rules & Prizes</button>
-              <button class="btn sm" data-reg="${e.id}">Register</button>
-            </div>
+            <div class="ev-actions"></div>
           </div>
         </div>
       </div>`;
@@ -515,11 +713,6 @@ function openRulesModal(id) {
     ${rulesHtml}
     ${coordinatorsHtml}
   `;
-
-  $('#modalRegisterBtn').onclick = () => {
-    modal.close();
-    openForm(e.id);
-  };
 
   modal.showModal();
 }
@@ -684,14 +877,14 @@ function showPay(reg) {
     CONFIG.payee
   )}&am=${reg.fee}&cu=INR&tn=${encodeURIComponent(`${reg.id} ${e.name}`)}`;
 
-  $('#payBox').innerHTML = `
-    <button class="back" data-edit="${e.id}">← Edit Registration Details</button>
+  $('#formBox').innerHTML = `
+    <button class="back" data-go="events">← Back to events</button>
     <div class="summary" style="--c:${e.c}">
-      <h2>UPI Payment</h2>
-      <p>Scan with any UPI app (GPay, PhonePe, Paytm) to complete registration.</p>
+      <h2>${e.name} Registration</h2>
+      <p>${fmtD(e.date)} at ${fmtT(e.date)} &bull; ${e.venue}</p>
     </div>
-    
-    <div class="qrbox">
+
+    <div class="qrbox" style="margin-top:18px; margin-bottom:18px;">
       <div class="amt">₹${reg.fee}</div>
       <div class="qr" id="payQR" aria-label="UPI Payment QR Code"></div>
       <small style="color:var(--muted)">UPI ID: <b>${CONFIG.upiId}</b></small>
@@ -732,7 +925,7 @@ function showPay(reg) {
     triggerConfetti();
   };
 
-  show('v-pay');
+  show('v-form');
   drawQR($('#payQR'), upiUrl, 200);
 }
 
@@ -793,7 +986,6 @@ function showDone(reg, fresh = true) {
       <button class="btn sm" id="copyIdBtn">📋 Copy Ticket ID</button>
       <button class="btn sm ghost" id="printTicketBtn">🖨️ Print / Save Ticket</button>
       <button class="btn sm ghost" data-go="events">Browse More Events</button>
-      <button class="btn sm ghost" data-go="mine">My Tickets</button>
     </div>
   `;
 
@@ -809,36 +1001,6 @@ function showDone(reg, fresh = true) {
   $('#printTicketBtn').onclick = () => {
     window.print();
   };
-}
-
-/* ---- My Tickets View ---- */
-function showMine() {
-  const list = store.get();
-  $('#mineList').innerHTML = list.length
-    ? list
-        .map(r => {
-          const e = ev(r.eventId) || { name: 'Fest Event', c: '#2B3AE7' };
-          return `
-          <div class="mine" style="--c:${e.c}">
-            <div>
-              <b>${e.name}</b>
-              <span>ID: ${r.id} &bull; ${esc(r.status)}</span>
-            </div>
-            <div style="display:flex;gap:8px">
-              <button class="btn ghost sm" data-ticket="${r.id}">View Ticket</button>
-            </div>
-          </div>`;
-        })
-        .join('')
-    : `
-      <div class="panel" style="text-align:center;padding:48px 20px">
-        <div style="font-size:42px;margin-bottom:12px">🎟️</div>
-        <h3>No registrations found</h3>
-        <p style="color:var(--muted);margin-bottom:20px">You haven't registered for any events on this device yet.</p>
-        <button class="btn" data-go="events">Explore & Register</button>
-      </div>`;
-
-  show('v-mine');
 }
 
 /* ---- QR Code Generator Wrapper ---- */
@@ -1012,9 +1174,7 @@ document.addEventListener('DOMContentLoaded', () => {
     if (!t) return;
 
     if (t.dataset.reg) openForm(t.dataset.reg);
-    else if (t.dataset.rules) openRulesModal(t.dataset.rules);
     else if (t.dataset.go === 'events') show('v-events');
-    else if (t.dataset.go === 'mine') showMine();
     else if (t.dataset.edit) openForm(t.dataset.edit);
     else if (t.dataset.ticket) {
       const reg = store.get().find(r => r.id === t.dataset.ticket);
@@ -1031,6 +1191,4 @@ document.addEventListener('DOMContentLoaded', () => {
   });
 
   $('#home').onclick = () => show('v-events');
-  $('#mineBtn').onclick = showMine;
-  $('#footerMineBtn').onclick = showMine;
 });

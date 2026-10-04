@@ -84,7 +84,6 @@
         <button class="theme-toggle" id="themeBtn" aria-label="Toggle light and dark mode" title="Toggle theme">
           <span id="themeIcon">🌙</span>
         </button>
-        <button class="btn ghost sm" id="mineBtn">My tickets (<span id="cnt">0</span>)</button>
       </div>
     </div>
   </header>
@@ -119,11 +118,6 @@
 
       <!-- Quick Highlights Ticker -->
       <div class="fest-stats">
-        <div class="stat-item">
-          <b>₹25,000+</b>
-          <span>Prize Pool</span>
-        </div>
-        <div class="stat-divider"></div>
         <div class="stat-item">
           <b>5</b>
           <span>Mega Events</span>
@@ -178,6 +172,7 @@
             <button class="chip" data-cat="esports">🎮 Esports</button>
             <button class="chip" data-cat="quiz">🧠 Tech Quiz</button>
             <button class="chip" data-cat="uiux">🎨 UI/UX Design</button>
+            <button class="chip" data-cat="nontech">🎭 Non-Tech Events</button>
           </div>
         </div>
 
@@ -196,14 +191,70 @@
         </div>
       </section>
 
+      <section class="rules-section" aria-labelledby="rulesHeading">
+        <div class="sec-h">
+          <div>
+            <h2 id="rulesHeading">Rules &amp; Regulations</h2>
+            <p>All participants must follow the below rules to ensure a smooth and fair fest experience.</p>
+          </div>
+        </div>
+
+        <div class="rules-grid">
+          <article class="rule-card">
+            <span class="rule-icon">✅</span>
+            <h3>Eligibility &amp; Registration</h3>
+            <ul>
+              <li>Only registered students with valid college ID are eligible.</li>
+              <li>Registration is valid only after successful payment confirmation.</li>
+              <li>Each participant must register before the final event deadline.</li>
+            </ul>
+          </article>
+
+          <article class="rule-card">
+            <span class="rule-icon">⏰</span>
+            <h3>Punctuality</h3>
+            <ul>
+              <li>Participants must arrive at least 15 minutes before the event starts.</li>
+              <li>Late entry may not be allowed without prior notice from the coordinator.</li>
+              <li>Team members should stay present for the complete event schedule.</li>
+            </ul>
+          </article>
+
+          <article class="rule-card">
+            <span class="rule-icon">🤝</span>
+            <h3>Code of Conduct</h3>
+            <ul>
+              <li>Respect all organizers, judges, volunteers, and fellow participants.</li>
+              <li>Any form of cheating, misconduct, or abusive behavior is strictly prohibited.</li>
+              <li>Participants must follow staff instructions at all times.</li>
+            </ul>
+          </article>
+
+          <article class="rule-card">
+            <span class="rule-icon">🎒</span>
+            <h3>Equipment &amp; Safety</h3>
+            <ul>
+              <li>Bring required personal devices or accessories only if mentioned in the event brief.</li>
+              <li>Do not damage college property, lab equipment, or shared facilities.</li>
+              <li>Follow all safety instructions during workshops, labs, and gaming zones.</li>
+            </ul>
+          </article>
+
+          <article class="rule-card">
+            <span class="rule-icon">💸</span>
+            <h3>Payments &amp; Refunds</h3>
+            <ul>
+              <li>Entry fees are non-refundable once the registration is confirmed.</li>
+              <li>Any change in team composition must be approved by the event coordinator.</li>
+              <li>Final results and decisions by judges are considered binding.</li>
+            </ul>
+          </article>
+        </div>
+      </section>
+
       <!-- Registration Form View -->
       <section class="view" id="v-form" hidden>
         <div class="panel" id="formBox"></div>
-      </section>
-
-      <!-- UPI Payment View -->
-      <section class="view" id="v-pay" hidden>
-        <div class="panel" id="payBox"></div>
       </section>
 
       <!-- Registration Confirmation View -->
@@ -211,14 +262,6 @@
         <div id="doneBox"></div>
       </section>
 
-      <!-- My Tickets View -->
-      <section class="view" id="v-mine" hidden>
-        <div class="sec-h">
-          <h2 tabindex="-1">My Tickets</h2>
-          <p>Locally stored on this device with verifiable check-in QR codes.</p>
-        </div>
-        <div id="mineList"></div>
-      </section>
     </div>
   </main>
 
@@ -239,7 +282,6 @@
 
       <div class="modal-footer">
         <button class="btn ghost sm" id="modalCancel">Close</button>
-        <button class="btn sm" id="modalRegisterBtn">Register Now</button>
       </div>
     </div>
   </dialog>
@@ -258,7 +300,6 @@
       </div>
       <div class="foot-links">
         <a href="#hero" class="foot-link">Top ↑</a>
-        <button class="foot-link-btn" id="footerMineBtn">My Tickets</button>
       </div>
     </div>
   </footer>

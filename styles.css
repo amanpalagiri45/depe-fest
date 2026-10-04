@@ -426,9 +426,9 @@ button, input, select, textarea {
 }
 
 .wrap {
-  max-width: 1080px;
+  max-width: 1180px;
   margin: 0 auto;
-  padding: 0 20px;
+  padding: 0 18px;
   width: 100%;
 }
 
@@ -558,7 +558,7 @@ header.top {
 .hero {
   background: var(--hero);
   color: var(--hero-text);
-  padding: 56px 0 60px;
+  padding: 42px 0 48px;
   position: relative;
   overflow: hidden;
   border-bottom: 1px solid var(--line);
@@ -649,7 +649,7 @@ header.top {
 }
 
 .hero h1 {
-  font-size: clamp(40px, 8vw, 84px);
+  font-size: clamp(42px, 6.6vw, 82px);
   font-weight: 800;
   letter-spacing: -0.03em;
   background: linear-gradient(135deg, #FFFFFF 30%, #A7F3D0 100%);
@@ -784,7 +784,7 @@ header.top {
 
 /* ================= MAIN & VIEWS ================= */
 main {
-  padding: 36px 0 64px;
+  padding: 26px 0 64px;
   flex: 1;
   position: relative;
   z-index: 1;
@@ -943,9 +943,68 @@ main {
   grid-template-columns: 1fr;
 }
 
+.rules-section {
+  margin-top: 26px;
+  padding: 24px 20px 12px;
+  background: rgba(255, 255, 255, 0.02);
+  border: 1px solid var(--line);
+  border-radius: var(--radius-lg);
+  box-shadow: var(--shadow-sm);
+}
+
+.rules-grid {
+  display: grid;
+  gap: 18px;
+  grid-template-columns: 1fr;
+  margin-top: 10px;
+}
+
+.rule-card {
+  background: var(--surface);
+  border: 1px solid var(--line);
+  border-radius: var(--radius-md);
+  padding: 20px 18px 18px;
+  box-shadow: var(--shadow-sm);
+}
+
+.rule-card h3 {
+  margin: 0 0 10px;
+  font-size: 20px;
+  letter-spacing: -0.02em;
+}
+
+.rule-card ul {
+  margin: 0;
+  padding-left: 18px;
+  color: var(--ink-secondary);
+  display: grid;
+  gap: 8px;
+}
+
+.rule-card li {
+  line-height: 1.55;
+}
+
+.rule-icon {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 42px;
+  height: 42px;
+  border-radius: 12px;
+  background: var(--brand-light);
+  color: var(--brand);
+  font-size: 20px;
+  margin-bottom: 12px;
+}
+
 @media (min-width: 820px) {
   .grid {
     grid-template-columns: 1fr 1fr;
+  }
+
+  .rules-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
   }
 }
 
@@ -953,6 +1012,7 @@ main {
   display: flex;
   background: var(--surface);
   border: 1px solid var(--line);
+  border-left: 6px solid var(--c);
   border-radius: var(--radius-lg);
   overflow: hidden;
   box-shadow: var(--shadow-sm);
@@ -964,28 +1024,6 @@ main {
   transform: translateY(-3px);
   box-shadow: 0 12px 32px rgba(0, 0, 0, 0.45), 0 0 20px rgba(16, 231, 157, 0.12);
   border-color: rgba(16, 231, 157, 0.35);
-}
-
-.stub {
-  flex: 0 0 80px;
-  background: var(--c);
-  color: var(--on);
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  padding: 14px 4px;
-  border-right: 2px dashed rgba(255, 255, 255, 0.4);
-  text-align: center;
-}
-
-.stub b {
-  font: 800 32px/1 "Bricolage Grotesque", sans-serif;
-}
-
-.stub span {
-  font-size: 13px;
-  font-weight: 700;
 }
 
 .ev .body {
@@ -1082,18 +1120,6 @@ main {
   flex-direction: column;
   position: relative;
   margin: 10px 0 30px;
-  padding-left: 20px;
-}
-
-.timeline-container::before {
-  content: "";
-  position: absolute;
-  top: 10px;
-  bottom: 10px;
-  left: 28px;
-  width: 3px;
-  background: var(--line);
-  border-radius: 99px;
 }
 
 .timeline-row {
@@ -1103,22 +1129,11 @@ main {
   position: relative;
 }
 
-.timeline-node {
-  flex: 0 0 18px;
-  height: 18px;
-  border-radius: 50%;
-  background: var(--brand);
-  border: 3px solid var(--surface);
-  box-shadow: 0 0 0 2px var(--brand), 0 0 12px rgba(16, 231, 157, 0.4);
-  margin-top: 18px;
-  z-index: 2;
-}
-
 .timeline-card {
   flex: 1;
   background: var(--surface);
   border: 1px solid var(--line);
-  border-left: 6px solid var(--c);
+  border-left: none;
   border-radius: var(--radius-md);
   padding: 18px 20px;
   box-shadow: var(--shadow-sm);
@@ -1390,8 +1405,8 @@ main {
 }
 
 .summary {
-  border-left: 6px solid var(--c);
-  padding: 2px 0 2px 14px;
+  border-left: none;
+  padding: 2px 0 2px 0;
   margin: 14px 0 22px;
 }
 
@@ -1682,7 +1697,7 @@ main {
   gap: 14px;
   background: var(--surface);
   border: 1px solid var(--line);
-  border-left: 6px solid var(--c);
+  border-left: none;
   border-radius: var(--radius-md);
   padding: 16px 18px;
   margin-bottom: 14px;
