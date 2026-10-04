@@ -1,13 +1,14 @@
 /**
  * AIMEX 2026 - Department Fest Registration Backend
  * Standard Node.js REST API & Static Web Server
- * Zero external dependencies required (uses built-in http, fs, path, url).
+ * Supports MongoDB when available and falls back to JSON files when offline.
  */
 
 const http = require('http');
 const fs = require('fs');
 const path = require('path');
 const url = require('url');
+const { connectDB, Event, Registration, ensureSeedEvents, mongoose } = require('./db');
 
 const PORT = process.env.PORT || 8000;
 const DATA_DIR = path.join(__dirname, 'data');
@@ -45,7 +46,12 @@ const MIME_TYPES = {
   '.woff2': 'font/woff2'
 };
 
-function getEvents() {
+async function getEvents() {
+  if (mongoose.connection.readyState === 1) {
+    const events = await Event.find().lean();
+    return Array.isArray(events) ? events : [];
+  }
+
   try {
     return JSON.parse(fs.readFileSync(EVENTS_FILE, 'utf8'));
   } catch (e) {
@@ -53,11 +59,24 @@ function getEvents() {
   }
 }
 
-function saveEvents(data) {
+async function saveEvents(data) {
+  if (mongoose.connection.readyState === 1) {
+    const docs = Array.isArray(data) ? data : [];
+    await Promise.all(
+      docs.map(item => Event.updateOne({ id: item.id }, { $set: item }, { upsert: true }))
+    );
+    return;
+  }
+
   fs.writeFileSync(EVENTS_FILE, JSON.stringify(data, null, 2), 'utf8');
 }
 
-function getRegistrations() {
+async function getRegistrations() {
+  if (mongoose.connection.readyState === 1) {
+    const regs = await Registration.find().sort({ timestamp: -1 }).lean();
+    return Array.isArray(regs) ? regs : [];
+  }
+
   try {
     return JSON.parse(fs.readFileSync(REGS_FILE, 'utf8'));
   } catch (e) {
@@ -65,7 +84,17 @@ function getRegistrations() {
   }
 }
 
-function saveRegistrations(data) {
+async function saveRegistrations(data) {
+  if (mongoose.connection.readyState === 1) {
+    const docs = Array.isArray(data) ? data : [];
+    await Promise.all(
+      docs.map(item =>
+        Registration.updateOne({ id: item.id }, { $set: item }, { upsert: true })
+      )
+    );
+    return;
+  }
+
   fs.writeFileSync(REGS_FILE, JSON.stringify(data, null, 2), 'utf8');
 }
 
@@ -100,7 +129,6 @@ const server = http.createServer(async (req, res) => {
   const pathname = parsedUrl.pathname;
   const method = req.method;
 
-  // CORS Headers
   res.setHeader('Access-Control-Allow-Origin', '*');
   res.setHeader('Access-Control-Allow-Methods', 'GET, POST, PATCH, DELETE, OPTIONS');
   res.setHeader('Access-Control-Allow-Headers', 'Content-Type, Authorization');
@@ -110,26 +138,22 @@ const server = http.createServer(async (req, res) => {
     return res.end();
   }
 
-  // ---- REST API ENDPOINTS ----
   if (pathname.startsWith('/api/')) {
-    // GET /api/config
     if (pathname === '/api/config' && method === 'GET') {
       return sendJson(res, 200, CONFIG);
     }
 
-    // GET /api/events
     if (pathname === '/api/events' && method === 'GET') {
-      return sendJson(res, 200, getEvents());
+      return sendJson(res, 200, await getEvents());
     }
 
-    // POST /api/register
     if (pathname === '/api/register' && method === 'POST') {
       const body = await readBody(req);
       if (!body.eventId || !body.name || !body.email || !body.roll) {
         return sendJson(res, 400, { error: 'Missing required fields (eventId, name, email, roll)' });
       }
 
-      const events = getEvents();
+      const events = await getEvents();
       const targetEvent = events.find(e => e.id === body.eventId);
       if (!targetEvent) {
         return sendJson(res, 404, { error: 'Event not found' });
@@ -161,17 +185,27 @@ const server = http.createServer(async (req, res) => {
         status: 'Payment Pending',
         checkedIn: false,
         checkInTime: null,
+        paymentTime: null,
         timestamp: new Date().toISOString()
       };
 
       if (targetEvent.slotsLeft > 0) {
         targetEvent.slotsLeft -= 1;
-        saveEvents(events);
+        await saveEvents(events);
       }
 
-      const regs = getRegistrations();
+      if (mongoose.connection.readyState === 1) {
+        const created = await Registration.create(newReg);
+        return sendJson(res, 201, {
+          success: true,
+          registration: created.toObject(),
+          message: 'Registration created successfully'
+        });
+      }
+
+      const regs = await getRegistrations();
       regs.unshift(newReg);
-      saveRegistrations(regs);
+      await saveRegistrations(regs);
 
       return sendJson(res, 201, {
         success: true,
@@ -180,14 +214,31 @@ const server = http.createServer(async (req, res) => {
       });
     }
 
-    // POST /api/pay
     if (pathname === '/api/pay' && method === 'POST') {
       const body = await readBody(req);
       if (!body.id || !body.utr) {
         return sendJson(res, 400, { error: 'Registration ID and UTR are required' });
       }
 
-      const regs = getRegistrations();
+      if (mongoose.connection.readyState === 1) {
+        const found = await Registration.findOne({ id: body.id });
+        if (!found) {
+          return sendJson(res, 404, { error: 'Registration not found' });
+        }
+
+        found.utr = String(body.utr).trim();
+        found.status = 'Confirmed (Verified)';
+        found.paymentTime = new Date();
+        await found.save();
+
+        return sendJson(res, 200, {
+          success: true,
+          registration: found.toObject(),
+          message: 'Payment verified and registration confirmed'
+        });
+      }
+
+      const regs = await getRegistrations();
       const found = regs.find(r => r.id === body.id);
       if (!found) {
         return sendJson(res, 404, { error: 'Registration not found' });
@@ -196,7 +247,7 @@ const server = http.createServer(async (req, res) => {
       found.utr = String(body.utr).trim();
       found.status = 'Confirmed (Verified)';
       found.paymentTime = new Date().toISOString();
-      saveRegistrations(regs);
+      await saveRegistrations(regs);
 
       return sendJson(res, 200, {
         success: true,
@@ -205,9 +256,8 @@ const server = http.createServer(async (req, res) => {
       });
     }
 
-    // GET /api/tickets
     if (pathname.startsWith('/api/tickets') && method === 'GET') {
-      const regs = getRegistrations();
+      const regs = await getRegistrations();
       const q = parsedUrl.query;
 
       if (q.id) {
@@ -229,14 +279,40 @@ const server = http.createServer(async (req, res) => {
       return sendJson(res, 200, { success: true, tickets: regs });
     }
 
-    // POST /api/tickets/checkin
     if (pathname === '/api/tickets/checkin' && method === 'POST') {
       const body = await readBody(req);
       if (!body.id) {
         return sendJson(res, 400, { error: 'Ticket ID is required' });
       }
 
-      const regs = getRegistrations();
+      if (mongoose.connection.readyState === 1) {
+        const found = await Registration.findOne({ id: body.id.trim() });
+        if (!found) {
+          return sendJson(res, 404, { error: 'Ticket ID not found' });
+        }
+
+        if (found.checkedIn) {
+          return sendJson(res, 200, {
+            success: true,
+            alreadyIn: true,
+            registration: found.toObject(),
+            message: `Already checked in at ${found.checkInTime}`
+          });
+        }
+
+        found.checkedIn = true;
+        found.checkInTime = new Date();
+        await found.save();
+
+        return sendJson(res, 200, {
+          success: true,
+          alreadyIn: false,
+          registration: found.toObject(),
+          message: 'Participant checked in successfully!'
+        });
+      }
+
+      const regs = await getRegistrations();
       const found = regs.find(r => r.id.toUpperCase() === body.id.trim().toUpperCase());
       if (!found) {
         return sendJson(res, 404, { error: 'Ticket ID not found' });
@@ -253,7 +329,7 @@ const server = http.createServer(async (req, res) => {
 
       found.checkedIn = true;
       found.checkInTime = new Date().toISOString();
-      saveRegistrations(regs);
+      await saveRegistrations(regs);
 
       return sendJson(res, 200, {
         success: true,
@@ -263,9 +339,8 @@ const server = http.createServer(async (req, res) => {
       });
     }
 
-    // GET /api/admin/registrations
     if (pathname === '/api/admin/registrations' && method === 'GET') {
-      let regs = getRegistrations();
+      let regs = await getRegistrations();
       const { eventId, status, search } = parsedUrl.query;
 
       if (eventId && eventId !== 'all') {
@@ -288,10 +363,9 @@ const server = http.createServer(async (req, res) => {
       return sendJson(res, 200, { success: true, count: regs.length, registrations: regs });
     }
 
-    // GET /api/admin/stats
     if (pathname === '/api/admin/stats' && method === 'GET') {
-      const regs = getRegistrations();
-      const events = getEvents();
+      const regs = await getRegistrations();
+      const events = await getEvents();
 
       const confirmed = regs.filter(r => (r.status || '').includes('Confirmed'));
       const checkedInCount = regs.filter(r => r.checkedIn).length;
@@ -317,9 +391,8 @@ const server = http.createServer(async (req, res) => {
       });
     }
 
-    // GET /api/admin/export
     if (pathname === '/api/admin/export' && method === 'GET') {
-      const regs = getRegistrations();
+      const regs = await getRegistrations();
       let csv = '"Ticket ID","Event","Participant Name","Email","Phone","Roll Number","Department","Year","Team Size","Team Members","Fee (INR)","Status","UTR Reference","Checked In","Check-in Time","Registered At"\r\n';
 
       regs.forEach(r => {
@@ -339,13 +412,11 @@ const server = http.createServer(async (req, res) => {
     return sendJson(res, 404, { error: 'API Endpoint Not Found' });
   }
 
-  // ---- STATIC FILE SERVING ----
   let cleanPath = pathname.replace(/^\/+/, '');
   if (!cleanPath) cleanPath = 'index.html';
 
   const filePath = path.join(__dirname, cleanPath);
 
-  // Security check: prevent directory traversal
   if (!filePath.startsWith(__dirname)) {
     res.writeHead(403);
     return res.end('403 Forbidden');
@@ -368,8 +439,10 @@ const server = http.createServer(async (req, res) => {
   });
 });
 
-server.listen(PORT, '0.0.0.0', () => {
-  console.log(`AIMEX 2026 Server running at http://0.0.0.0:${PORT}/`);
+connectDB().then(ensureSeedEvents).finally(() => {
+  server.listen(PORT, '0.0.0.0', () => {
+    console.log(`AIMEX 2026 Server running at http://0.0.0.0:${PORT}/`);
+  });
 });
 
 server.on('error', (err) => {
