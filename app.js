@@ -645,6 +645,69 @@ function renderTimeline() {
     .join('');
 }
 
+function showAdminAccessModal() {
+  const modal = $('#adminAccessModal');
+  if (!modal) return;
+  $('#adminAccessError').textContent = '';
+  $('#adminRole').value = '';
+  $('#adminPass').value = '';
+  modal.showModal();
+}
+
+function closeAdminAccessModal() {
+  const modal = $('#adminAccessModal');
+  if (modal && modal.open) modal.close();
+}
+
+async function handleAdminAccessSubmit() {
+  const role = $('#adminRole').value;
+  const pass = $('#adminPass').value.trim();
+  const errorEl = $('#adminAccessError');
+
+  if (!role) {
+    errorEl.textContent = 'Please select your role.';
+    return;
+  }
+
+  try {
+    const response = await fetch('/api/admin/login', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ role, accessCode: pass })
+    });
+    const result = await response.json();
+    if (!response.ok) {
+      errorEl.textContent = result.error || 'Unable to sign in.';
+      return;
+    }
+
+    closeAdminAccessModal();
+    show('v-admin');
+    loadAdminDashboard();
+  } catch (error) {
+    errorEl.textContent = 'Unable to contact the server. Try again.';
+  }
+}
+
+async function openAdminDashboard() {
+  try {
+    const response = await fetch('/api/admin/session');
+    if (!response.ok) {
+      showAdminAccessModal();
+      return;
+    }
+    show('v-admin');
+    loadAdminDashboard();
+  } catch (error) {
+    showAdminAccessModal();
+  }
+}
+
+async function logoutAdmin() {
+  await fetch('/api/admin/logout', { method: 'POST' });
+  show('v-events');
+}
+
 /* ---- Admin Dashboard ---- */
 async function loadAdminDashboard() {
   const statsWrap = $('#adminStats');
@@ -746,11 +809,6 @@ async function loadAdminDashboard() {
     statsWrap.innerHTML = '<div class="admin-empty">Admin data is not available right now. Start the backend server and try again.</div>';
     tableBody.innerHTML = '<tr><td colspan="7" class="admin-empty">No data loaded.</td></tr>';
   }
-}
-
-function openAdminDashboard() {
-  show('v-admin');
-  loadAdminDashboard();
 }
 
 /* ---- Rules & Prizes Modal ---- */
@@ -1282,6 +1340,15 @@ document.addEventListener('DOMContentLoaded', () => {
   $('#adminEventFilter').addEventListener('change', loadAdminDashboard);
   $('#adminStatusFilter').addEventListener('change', loadAdminDashboard);
   $('#adminSearch').addEventListener('input', loadAdminDashboard);
+  $('#adminAccessSubmit').addEventListener('click', handleAdminAccessSubmit);
+  $('#adminPass').addEventListener('keydown', e => {
+    if (e.key === 'Enter') handleAdminAccessSubmit();
+  });
+  $('#adminAccessClose').addEventListener('click', () => closeAdminAccessModal());
+  $('#adminAccessModal').addEventListener('click', e => {
+    if (e.target === $('#adminAccessModal')) closeAdminAccessModal();
+  });
+  $('#adminLogoutBtn').addEventListener('click', logoutAdmin);
 
   // Global delegation
   document.addEventListener('click', e => {

@@ -43,6 +43,10 @@ aimex-fest/
 
 ## ⚙️ Configuration
 
+### Admin Dashboard Access
+
+Copy `.env.example` to `.env`, then set a random `ADMIN_SESSION_SECRET` of at least 32 characters and a unique code for each authorized role. Keep `.env` private and configure the same variables in your hosting provider before deployment. Admin data and CSV export require a valid server-issued session.
+
 Edit the `CONFIG` object at the top of [`app.js`](file:///c:/Users/LENOVO/Desktop/depe%20fest/app.js):
 
 ```javascript

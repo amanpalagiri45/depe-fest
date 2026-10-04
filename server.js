@@ -8,12 +8,23 @@ const http = require('http');
 const fs = require('fs');
 const path = require('path');
 const url = require('url');
+const crypto = require('crypto');
 const { connectDB, Event, Registration, ensureSeedEvents, mongoose } = require('./db');
 
 const PORT = process.env.PORT || 8000;
 const DATA_DIR = path.join(__dirname, 'data');
 const EVENTS_FILE = path.join(DATA_DIR, 'events.json');
 const REGS_FILE = path.join(DATA_DIR, 'registrations.json');
+const ADMIN_SESSION_COOKIE = 'aimex_admin_session';
+const ADMIN_SESSION_TTL = 8 * 60 * 60 * 1000;
+const ADMIN_ROLES = {
+  'Club Coordinator': 'ADMIN_CODE_CLUB_COORDINATOR',
+  HOD: 'ADMIN_CODE_HOD',
+  'Vice President': 'ADMIN_CODE_VICE_PRESIDENT',
+  Faculty: 'ADMIN_CODE_FACULTY',
+  'Event Committee': 'ADMIN_CODE_EVENT_COMMITTEE'
+};
+const loginAttempts = new Map();
 
 if (!fs.existsSync(DATA_DIR)) {
   fs.mkdirSync(DATA_DIR, { recursive: true });
@@ -98,16 +109,74 @@ async function saveRegistrations(data) {
   fs.writeFileSync(REGS_FILE, JSON.stringify(data, null, 2), 'utf8');
 }
 
-function sendJson(res, statusCode, data) {
+function sendJson(res, statusCode, data, extraHeaders = {}) {
   const json = JSON.stringify(data);
   res.writeHead(statusCode, {
     'Content-Type': 'application/json; charset=utf-8',
     'Access-Control-Allow-Origin': '*',
     'Access-Control-Allow-Methods': 'GET, POST, PATCH, DELETE, OPTIONS',
     'Access-Control-Allow-Headers': 'Content-Type, Authorization',
-    'Content-Length': Buffer.byteLength(json)
+    'Content-Length': Buffer.byteLength(json),
+    ...extraHeaders
   });
   res.end(json);
+}
+
+function adminSessionSecret() {
+  const secret = process.env.ADMIN_SESSION_SECRET || '';
+  return secret.length >= 32 ? secret : null;
+}
+
+function signAdminSession(payload) {
+  const encoded = Buffer.from(JSON.stringify(payload)).toString('base64url');
+  const signature = crypto.createHmac('sha256', adminSessionSecret()).update(encoded).digest('base64url');
+  return `${encoded}.${signature}`;
+}
+
+function readAdminSession(req) {
+  const secret = adminSessionSecret();
+  if (!secret) return null;
+
+  const cookieHeader = req.headers.cookie || '';
+  const cookie = cookieHeader.split(';').map(part => part.trim()).find(part => part.startsWith(`${ADMIN_SESSION_COOKIE}=`));
+  if (!cookie) return null;
+
+  const token = cookie.slice(ADMIN_SESSION_COOKIE.length + 1);
+  const [encoded, signature] = token.split('.');
+  if (!encoded || !signature) return null;
+
+  const expected = crypto.createHmac('sha256', secret).update(encoded).digest();
+  let actual;
+  try {
+    actual = Buffer.from(signature, 'base64url');
+  } catch (error) {
+    return null;
+  }
+  if (actual.length !== expected.length || !crypto.timingSafeEqual(actual, expected)) return null;
+
+  try {
+    const payload = JSON.parse(Buffer.from(encoded, 'base64url').toString('utf8'));
+    if (!ADMIN_ROLES[payload.role] || payload.expiresAt <= Date.now()) return null;
+    return payload;
+  } catch (error) {
+    return null;
+  }
+}
+
+function adminCookie(token, maxAge) {
+  const secure = process.env.NODE_ENV === 'production' ? '; Secure' : '';
+  return `${ADMIN_SESSION_COOKIE}=${token}; HttpOnly; SameSite=Strict; Path=/; Max-Age=${maxAge}${secure}`;
+}
+
+function checkAdminLoginLimit(req) {
+  const ip = req.socket.remoteAddress || 'unknown';
+  const now = Date.now();
+  const attempts = loginAttempts.get(ip);
+  if (!attempts || attempts.resetAt <= now) {
+    loginAttempts.set(ip, { count: 0, resetAt: now + 15 * 60 * 1000 });
+  }
+  const current = loginAttempts.get(ip);
+  return current.count < 5 ? current : null;
 }
 
 function readBody(req) {
@@ -139,6 +208,53 @@ const server = http.createServer(async (req, res) => {
   }
 
   if (pathname.startsWith('/api/')) {
+    if (pathname === '/api/admin/login' && method === 'POST') {
+      if (!adminSessionSecret()) {
+        return sendJson(res, 503, { error: 'Admin authentication is not configured on the server.' });
+      }
+
+      const attempt = checkAdminLoginLimit(req);
+      if (!attempt) {
+        return sendJson(res, 429, { error: 'Too many sign-in attempts. Try again in 15 minutes.' });
+      }
+
+      const body = await readBody(req);
+      const envName = ADMIN_ROLES[body.role];
+      const expectedCode = envName && process.env[envName];
+      const suppliedCode = String(body.accessCode || '');
+      const matches = expectedCode && crypto.timingSafeEqual(
+        crypto.createHash('sha256').update(suppliedCode).digest(),
+        crypto.createHash('sha256').update(expectedCode).digest()
+      ) && suppliedCode.length === expectedCode.length;
+
+      if (!matches) {
+        attempt.count += 1;
+        return sendJson(res, 401, { error: 'Invalid role or access code.' });
+      }
+
+      loginAttempts.delete(req.socket.remoteAddress || 'unknown');
+      const session = signAdminSession({ role: body.role, expiresAt: Date.now() + ADMIN_SESSION_TTL });
+      return sendJson(res, 200, { success: true, role: body.role }, {
+        'Set-Cookie': adminCookie(session, ADMIN_SESSION_TTL / 1000)
+      });
+    }
+
+    if (pathname === '/api/admin/session' && method === 'GET') {
+      const session = readAdminSession(req);
+      if (!session) return sendJson(res, 401, { error: 'Admin sign-in required.' });
+      return sendJson(res, 200, { authorized: true, role: session.role });
+    }
+
+    if (pathname === '/api/admin/logout' && method === 'POST') {
+      return sendJson(res, 200, { success: true }, { 'Set-Cookie': adminCookie('', 0) });
+    }
+
+    if (pathname.startsWith('/api/admin/')) {
+      if (!readAdminSession(req)) {
+        return sendJson(res, 401, { error: 'Admin sign-in required.' });
+      }
+    }
+
     if (pathname === '/api/config' && method === 'GET') {
       return sendJson(res, 200, CONFIG);
     }
@@ -276,10 +392,18 @@ const server = http.createServer(async (req, res) => {
         return sendJson(res, 200, { success: true, tickets: matched });
       }
 
+      if (!readAdminSession(req)) {
+        return sendJson(res, 401, { error: 'Admin sign-in required to list all tickets.' });
+      }
+
       return sendJson(res, 200, { success: true, tickets: regs });
     }
 
     if (pathname === '/api/tickets/checkin' && method === 'POST') {
+      if (!readAdminSession(req)) {
+        return sendJson(res, 401, { error: 'Admin sign-in required to check in participants.' });
+      }
+
       const body = await readBody(req);
       if (!body.id) {
         return sendJson(res, 400, { error: 'Ticket ID is required' });

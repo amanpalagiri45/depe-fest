@@ -190,7 +190,6 @@
           <p>Try searching for different keywords or clear the category filters.</p>
           <button class="btn sm ghost" id="resetFiltersBtn">Reset Filters</button>
         </div>
-      </section>
 
       <section class="rules-section" aria-labelledby="rulesHeading">
         <div class="sec-h">
@@ -252,6 +251,7 @@
           </article>
         </div>
       </section>
+      </section>
 
       <!-- Admin Dashboard -->
       <section class="view" id="v-admin" hidden>
@@ -275,6 +275,7 @@
           <input id="adminSearch" type="search" placeholder="Search by name, roll, email, ticket ID..." aria-label="Search registrations">
           <button class="btn sm" id="adminRefreshBtn">Refresh</button>
           <a class="btn sm ghost" href="/api/admin/export" target="_blank" rel="noreferrer">Export CSV</a>
+          <button class="btn sm ghost" id="adminLogoutBtn">Sign out</button>
         </div>
 
         <div class="admin-stats" id="adminStats"></div>
@@ -327,6 +328,41 @@
 
       <div class="modal-footer">
         <button class="btn ghost sm" id="modalCancel">Close</button>
+      </div>
+    </div>
+  </dialog>
+
+  <dialog class="modal-dialog admin-access-dialog" id="adminAccessModal">
+    <div class="modal-card admin-access-card">
+      <div class="modal-header" style="--c: var(--brand); --on: var(--on-brand);">
+        <div>
+          <span class="modal-tag">Restricted Access</span>
+          <h2>Admin Sign-In</h2>
+        </div>
+        <button class="modal-close" id="adminAccessClose" aria-label="Close admin sign-in">✕</button>
+      </div>
+
+      <div class="modal-body admin-access-body">
+        <p class="access-note">This section is restricted to authorized AIMEX coordinators, HODs, faculty, and senior committee members.</p>
+
+        <div class="access-form">
+          <label for="adminRole">Select your role</label>
+          <select id="adminRole">
+            <option value="">Choose a role</option>
+            <option value="Club Coordinator">Club Coordinator</option>
+            <option value="HOD">HOD</option>
+            <option value="Vice President">Vice President</option>
+            <option value="Faculty">Faculty</option>
+            <option value="Event Committee">Event Committee</option>
+          </select>
+
+          <label for="adminPass">Access code</label>
+          <input id="adminPass" type="password" placeholder="Enter your access code" autocomplete="off">
+
+          <p id="adminAccessError" class="access-error" aria-live="polite"></p>
+
+          <button class="btn block" id="adminAccessSubmit">Unlock Dashboard</button>
+        </div>
       </div>
     </div>
   </dialog>
