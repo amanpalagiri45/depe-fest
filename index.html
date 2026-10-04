@@ -357,7 +357,15 @@
           </select>
 
           <label for="adminPass">Access code</label>
-          <input id="adminPass" type="password" placeholder="Enter your access code" autocomplete="off">
+          <div class="access-code-field">
+            <input id="adminPass" type="password" placeholder="Enter your access code" autocomplete="off">
+            <button class="password-toggle" id="adminPassToggle" type="button" aria-label="Show access code" aria-controls="adminPass" aria-pressed="false" title="Show access code">
+              <svg viewBox="0 0 24 24" aria-hidden="true" focusable="false">
+                <path d="M2.5 12s3.4-6 9.5-6 9.5 6 9.5 6-3.4 6-9.5 6-9.5-6-9.5-6Z" />
+                <circle cx="12" cy="12" r="2.5" />
+              </svg>
+            </button>
+          </div>
 
           <p id="adminAccessError" class="access-error" aria-live="polite"></p>
 

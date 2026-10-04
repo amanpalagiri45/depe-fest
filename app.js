@@ -651,6 +651,10 @@ function showAdminAccessModal() {
   $('#adminAccessError').textContent = '';
   $('#adminRole').value = '';
   $('#adminPass').value = '';
+  $('#adminPass').type = 'password';
+  $('#adminPassToggle').setAttribute('aria-pressed', 'false');
+  $('#adminPassToggle').setAttribute('aria-label', 'Show access code');
+  $('#adminPassToggle').title = 'Show access code';
   modal.showModal();
 }
 
@@ -1341,6 +1345,15 @@ document.addEventListener('DOMContentLoaded', () => {
   $('#adminStatusFilter').addEventListener('change', loadAdminDashboard);
   $('#adminSearch').addEventListener('input', loadAdminDashboard);
   $('#adminAccessSubmit').addEventListener('click', handleAdminAccessSubmit);
+  $('#adminPassToggle').addEventListener('click', () => {
+    const input = $('#adminPass');
+    const showAccessCode = input.type === 'password';
+    input.type = showAccessCode ? 'text' : 'password';
+    const label = showAccessCode ? 'Hide access code' : 'Show access code';
+    $('#adminPassToggle').setAttribute('aria-pressed', String(showAccessCode));
+    $('#adminPassToggle').setAttribute('aria-label', label);
+    $('#adminPassToggle').title = label;
+  });
   $('#adminPass').addEventListener('keydown', e => {
     if (e.key === 'Enter') handleAdminAccessSubmit();
   });

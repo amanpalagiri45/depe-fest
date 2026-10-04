@@ -1501,6 +1501,55 @@ main {
   font: inherit;
 }
 
+.access-code-field {
+  display: flex;
+  min-width: 0;
+}
+
+.access-code-field input {
+  flex: 1;
+  min-width: 0;
+  border-radius: var(--radius-md) 0 0 var(--radius-md);
+}
+
+.password-toggle {
+  display: grid;
+  flex: 0 0 48px;
+  min-height: 46px;
+  place-items: center;
+  padding: 0;
+  border: 1px solid var(--line);
+  border-left: 0;
+  border-radius: 0 var(--radius-md) var(--radius-md) 0;
+  background: var(--surface-card);
+  color: var(--muted);
+  cursor: pointer;
+}
+
+.password-toggle:hover {
+  color: var(--brand);
+}
+
+.password-toggle:focus-visible {
+  outline: 2px solid var(--brand);
+  outline-offset: 2px;
+}
+
+.password-toggle svg {
+  width: 20px;
+  height: 20px;
+  fill: none;
+  stroke: currentColor;
+  stroke-width: 1.8;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+
+.access-code-field:focus-within input,
+.access-code-field:focus-within .password-toggle {
+  border-color: var(--brand);
+}
+
 .access-form input:focus,
 .access-form select:focus {
   outline: none;
