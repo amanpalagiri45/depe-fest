@@ -505,10 +505,22 @@ header.top {
   flex-direction: column;
 }
 
+.brand-name {
+  display: flex !important;
+  align-items: baseline;
+  gap: 6px;
+}
+
 .brand b {
   font: 800 22px "Bricolage Grotesque", sans-serif;
   letter-spacing: -0.02em;
   color: var(--brand);
+}
+
+.brand .brand-version {
+  color: var(--ink-secondary);
+  font-size: 13px;
+  font-weight: 800;
 }
 
 .brand span {
@@ -874,6 +886,105 @@ main {
 .sec-h p {
   margin: 4px 0 0;
   color: var(--muted);
+}
+
+.welcome-card {
+  position: relative;
+  display: flex;
+  min-height: min(660px, calc(100vh - 150px));
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden;
+  padding: clamp(28px, 7vw, 72px) 22px;
+  border: 1px solid var(--line);
+  border-radius: var(--radius-lg);
+  background:
+    radial-gradient(ellipse at 50% 0%, rgba(167, 139, 250, 0.14), transparent 52%),
+    var(--surface);
+  box-shadow: var(--shadow-md);
+  text-align: center;
+}
+
+.welcome-logo {
+  width: clamp(84px, 15vw, 124px);
+  height: clamp(84px, 15vw, 124px);
+  object-fit: contain;
+  margin-bottom: 20px;
+}
+
+.welcome-eyebrow {
+  margin: 0 0 12px;
+  color: var(--brand);
+  font-size: clamp(12px, 2vw, 15px);
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+.welcome-card h1 {
+  display: flex;
+  align-items: baseline;
+  justify-content: center;
+  gap: 10px;
+  color: var(--ink);
+  font-size: clamp(44px, 9vw, 88px);
+}
+
+.welcome-version {
+  color: var(--brand);
+  font-size: 0.48em;
+  letter-spacing: 0;
+}
+
+.welcome-copy {
+  max-width: 56ch;
+  margin: 14px 0 0;
+  color: var(--ink-secondary);
+  font-size: clamp(16px, 2.5vw, 20px);
+}
+
+.welcome-meta,
+.welcome-events {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 10px;
+}
+
+.welcome-meta {
+  margin-top: 24px;
+}
+
+.welcome-meta span,
+.welcome-events span {
+  padding: 8px 14px;
+  border: 1px solid var(--line);
+  border-radius: var(--radius-full);
+  background: var(--surface-card);
+  color: var(--ink-secondary);
+  font-size: 13px;
+  font-weight: 600;
+}
+
+.welcome-events {
+  margin-top: 18px;
+}
+
+.welcome-events span {
+  border-color: var(--brand-light);
+  color: var(--brand);
+}
+
+.welcome-cta {
+  margin-top: 28px;
+  min-height: 50px;
+  padding: 0 24px;
+}
+
+.welcome-cta span {
+  font-size: 20px;
+  line-height: 1;
 }
 
 /* View Switcher */
@@ -2433,6 +2544,10 @@ footer {
   .brand b {
     font-size: 16px;
     white-space: nowrap;
+  }
+
+  .brand .brand-version {
+    font-size: 11px;
   }
 
   .brand-copy > span {

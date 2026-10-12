@@ -26,7 +26,10 @@
       <button class="brand" id="home" aria-label="Go to home">
         <img class="brand-logo" src="/assets/aiml-department-logo.png" alt="MITS AIML department emblem">
         <span class="brand-copy">
-          <b id="fest">AIMEX 2026</b>
+          <span class="brand-name">
+            <b id="fest">AIMEX 2026</b>
+            <span class="brand-version">2.0</span>
+          </span>
           <span id="college">DEPT OF AI AND ML</span>
         </span>
       </button>
@@ -93,6 +96,16 @@
 
   <main>
     <div class="wrap">
+      <section class="view" id="v-welcome" aria-labelledby="welcomeHeading" hidden>
+        <div class="welcome-card">
+          <img class="welcome-logo" src="/assets/aiml-department-logo.png" alt="MITS AIML department emblem">
+          <p class="welcome-eyebrow">Department of Artificial Intelligence and Machine Learning presents</p>
+          <h1 id="welcomeHeading">AIMEX 2026 <span class="welcome-version">2.0</span></h1>
+          <p class="welcome-copy">A glimpse into our department fest: a day of technology, ideas, and friendly competition.</p>
+          <button class="btn welcome-cta" id="exploreFestBtn" type="button">Explore the Fest <span aria-hidden="true">→</span></button>
+        </div>
+      </section>
+
       <!-- Events / Browse View -->
       <section class="view" id="v-events" aria-labelledby="evh">
         <div class="sec-h">
@@ -283,10 +296,6 @@
               <div class="f">
                 <label for="letterBranch">Branch</label>
                 <input id="letterBranch" name="branch" required>
-              </div>
-              <div class="f">
-                <label for="letterDepartment">Department</label>
-                <input id="letterDepartment" name="department" required>
               </div>
               <div class="f">
                 <label for="letterYear">Year</label>

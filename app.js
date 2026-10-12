@@ -676,7 +676,6 @@ function downloadPermissionLetter(data) {
       ['Student Name', data.studentName],
       ['Roll Number', data.rollNumber],
       ['Branch', data.branch],
-      ['Department', data.department],
       ['Year', data.year],
       ['Section', data.section]
     ]);
@@ -1514,7 +1513,9 @@ document.addEventListener('DOMContentLoaded', () => {
 
   renderEvents();
   renderTimeline();
-  show('v-events');
+  show('v-welcome');
+
+  $('#exploreFestBtn').addEventListener('click', () => show('v-events'));
 
   const letterEvent = $('#letterEvent');
   EVENTS.forEach(event => {
@@ -1549,7 +1550,6 @@ document.addEventListener('DOMContentLoaded', () => {
     const studentName = String(formData.get('studentName')).trim();
     const rollNumber = String(formData.get('rollNumber')).trim();
     const branch = String(formData.get('branch')).trim();
-    const department = String(formData.get('department')).trim();
     const year = String(formData.get('year')).trim();
     const section = String(formData.get('section')).trim();
     const event = EVENTS.find(item => item.id === formData.get('eventName'));
@@ -1577,7 +1577,6 @@ document.addEventListener('DOMContentLoaded', () => {
       studentName,
       rollNumber,
       branch,
-      department,
       year,
       section,
       eventName: event.name,
@@ -1605,7 +1604,6 @@ document.addEventListener('DOMContentLoaded', () => {
           <tr><th>Student Name</th><td>${esc(studentName)}</td></tr>
           <tr><th>Roll Number</th><td>${esc(rollNumber)}</td></tr>
           <tr><th>Branch</th><td>${esc(branch)}</td></tr>
-          <tr><th>Department</th><td>${esc(department)}</td></tr>
           <tr><th>Year</th><td>${esc(year)}</td></tr>
           <tr><th>Section</th><td>${esc(section)}</td></tr>
         </tbody>
