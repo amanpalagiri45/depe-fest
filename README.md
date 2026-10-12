@@ -1,4 +1,4 @@
-# AIMEX 2026 – Department Fest Registration & Experience Portal
+# AIMEX 2K26 – Department Fest Registration & Experience Portal
 
 A modern, responsive event registration platform and tech fest portal built with vanilla HTML, CSS, and JavaScript. Features real-time search and category filtering, live countdown timer, interactive schedule timeline, prize pool & rulebook modal, UPI payment integration, check-in QR codes, celebration confetti, and browser-based ticket management.
 
@@ -53,9 +53,9 @@ Edit the `CONFIG` object at the top of [`app.js`](file:///c:/Users/LENOVO/Deskto
 const CONFIG = {
   college: 'MITS Deemed to be University (MITS)',
   dept: 'Department of Artificial Intelligence and Machine Learning',
-  fest: 'AIMEX 2026',
+  fest: 'AIMEX 2K26',
   upiId: 'deptfest@upi',              // Replace with your fest UPI ID
-  payee: 'AIMEX 2026 Dept Fest',
+  payee: 'AIMEX 2K26 Dept Fest',
   festDate: '2026-11-05T09:00:00'     // Date for the live countdown
 };
 ```

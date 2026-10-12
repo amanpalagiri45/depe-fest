@@ -1,11 +1,11 @@
-/* ---- AIMEX 2026 DEPARTMENT FEST SCRIPT ---- */
+/* ---- AIMEX 2K26 DEPARTMENT FEST SCRIPT ---- */
 
 const CONFIG = {
   college: 'MITS Deemed to be University (MITS)',
   dept: 'Department of Artificial Intelligence and Machine Learning',
-  fest: 'AIMEX 2026',
+  fest: 'AIMEX 2K26',
   upiId: 'deptfest@upi',
-  payee: 'AIMEX 2026 Dept Fest',
+  payee: 'AIMEX 2K26 Dept Fest',
   festDate: '2026-11-05T09:00:00'
 };
 

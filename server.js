@@ -1,5 +1,5 @@
 /**
- * AIMEX 2026 - Department Fest Registration Backend
+ * AIMEX 2K26 - Department Fest Registration Backend
  * Standard Node.js REST API & Static Web Server
  * Supports MongoDB when available and falls back to JSON files when offline.
  */
@@ -36,9 +36,9 @@ if (!fs.existsSync(REGS_FILE)) {
 const CONFIG = {
   college: 'MITS Deemed to be University (MITS)',
   dept: 'Department of Artificial Intelligence and Machine Learning',
-  fest: 'AIMEX 2026',
+  fest: 'AIMEX 2K26',
   upiId: 'deptfest@upi',
-  payee: 'AIMEX 2026 Dept Fest',
+  payee: 'AIMEX 2K26 Dept Fest',
   festDate: '2026-11-05T09:00:00'
 };
 
@@ -613,7 +613,7 @@ const server = http.createServer(async (req, res) => {
 
 connectDB().then(ensureSeedEvents).finally(() => {
   server.listen(PORT, '0.0.0.0', () => {
-    console.log(`AIMEX 2026 Server running at http://0.0.0.0:${PORT}/`);
+    console.log(`AIMEX 2K26 Server running at http://0.0.0.0:${PORT}/`);
   });
 });
 

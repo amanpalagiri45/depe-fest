@@ -1,7 +1,7 @@
 {
   "name": "aimex-fest-registration",
   "version": "1.0.0",
-  "description": "Modern event registration platform for AIMEX 2026 department fest",
+  "description": "Modern event registration platform for AIMEX 2K26 department fest",
   "main": "server.js",
   "scripts": {
     "start": "node server.js",

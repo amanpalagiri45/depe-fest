@@ -1,5 +1,5 @@
 /**
- * AIMEX 2026 - Interactive AI Neural Synapse Background
+ * AIMEX 2K26 - Interactive AI Neural Synapse Background
  * Developed for Department of Artificial Intelligence and Machine Learning
  * Renders an animated, interactive neural network particle system in the Hero section.
  */

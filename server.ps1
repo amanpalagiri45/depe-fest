@@ -19,13 +19,13 @@ $listener = New-Object System.Net.HttpListener
 $listener.Prefixes.Add("http://localhost:$port/")
 try {
     $listener.Start()
-    Write-Host "AIMEX 2026 Backend & Web Server running at http://localhost:$port/"
+    Write-Host "AIMEX 2K26 Backend & Web Server running at http://localhost:$port/"
 } catch {
     $port = 8080
     $listener = New-Object System.Net.HttpListener
     $listener.Prefixes.Add("http://localhost:$port/")
     $listener.Start()
-    Write-Host "AIMEX 2026 Backend & Web Server running at http://localhost:$port/"
+    Write-Host "AIMEX 2K26 Backend & Web Server running at http://localhost:$port/"
 }
 
 $mimeTypes = @{
@@ -46,9 +46,9 @@ $mimeTypes = @{
 $CONFIG = @{
     college = "MITS Deemed to be University (MITS)"
     dept    = "Department of Artificial Intelligence and Machine Learning"
-    fest    = "AIMEX 2026"
+    fest    = "AIMEX 2K26"
     upiId   = "deptfest@upi"
-    payee   = "AIMEX 2026 Dept Fest"
+    payee   = "AIMEX 2K26 Dept Fest"
     festDate= "2026-11-05T09:00:00"
 }
 
