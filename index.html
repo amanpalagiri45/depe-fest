@@ -24,12 +24,18 @@
   <header class="top">
     <div class="wrap header-wrap">
       <button class="brand" id="home" aria-label="Go to home">
-        <b id="fest">AIMEX 2026</b>
-        <span id="college">Department of AIML</span>
+        <img class="brand-logo" src="/assets/aiml-department-logo.png" alt="MITS AIML department emblem">
+        <span class="brand-copy">
+          <b id="fest">AIMEX 2026</b>
+          <span id="college">DEPT OF AI AND ML</span>
+        </span>
       </button>
 
       <div class="header-actions">
-        <button class="btn sm ghost" id="letterPortalBtn" type="button">Generate Letter</button>
+        <button class="btn sm ghost" id="letterPortalBtn" type="button" aria-label="Open letter generator">
+          <span class="letter-portal-full-label">Generate Letter</span>
+          <span class="letter-portal-mobile-label" aria-hidden="true">Letter</span>
+        </button>
         <button class="admin-toggle" id="adminBtn" aria-label="Open admin dashboard">Admin</button>
         <button class="theme-toggle" id="themeBtn" aria-label="Toggle light and dark mode" title="Toggle theme">
           <span id="themeIcon">🌙</span>

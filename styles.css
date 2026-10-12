@@ -483,8 +483,26 @@ header.top {
   cursor: pointer;
   text-align: left;
   display: flex;
-  flex-direction: column;
+  align-items: center;
+  gap: 10px;
   line-height: 1.2;
+  min-width: 0;
+}
+
+.brand-logo {
+  display: block;
+  width: 48px;
+  height: 48px;
+  flex: 0 0 48px;
+  object-fit: contain;
+  border-radius: 50%;
+  background: transparent;
+}
+
+.brand-copy {
+  display: flex;
+  min-width: 0;
+  flex-direction: column;
 }
 
 .brand b {
@@ -499,10 +517,18 @@ header.top {
   font-weight: 500;
 }
 
+.brand-copy > span {
+  white-space: nowrap;
+}
+
 .header-actions {
   display: flex;
   align-items: center;
   gap: 10px;
+}
+
+.letter-portal-mobile-label {
+  display: none;
 }
 
 .admin-toggle {
@@ -2386,5 +2412,55 @@ footer {
 
   .header-actions {
     gap: 6px;
+  }
+}
+
+@media (max-width: 700px) {
+  .header-wrap {
+    gap: 8px;
+  }
+
+  .brand {
+    gap: 8px;
+  }
+
+  .brand-logo {
+    width: 36px;
+    height: 36px;
+    flex-basis: 36px;
+  }
+
+  .brand b {
+    font-size: 16px;
+    white-space: nowrap;
+  }
+
+  .brand-copy > span {
+    display: inline;
+    font-size: 9px;
+    line-height: 1.1;
+  }
+
+  .header-actions {
+    flex-shrink: 0;
+    gap: 6px;
+  }
+
+  #letterPortalBtn {
+    padding: 0 8px;
+    font-size: 12px;
+    white-space: nowrap;
+  }
+
+  .letter-portal-full-label {
+    display: none;
+  }
+
+  .letter-portal-mobile-label {
+    display: inline;
+  }
+
+  .admin-toggle {
+    padding: 0 9px;
   }
 }

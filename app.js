@@ -1507,7 +1507,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
   // Populate config texts
   $('#fest').textContent = CONFIG.fest;
-  $('#college').textContent = CONFIG.dept;
+  $('#college').textContent = 'DEPT OF AI AND ML';
   $('#heroT').textContent = CONFIG.fest;
   $('#foot').textContent = CONFIG.college;
   $('#footFest').textContent = CONFIG.fest;
