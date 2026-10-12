@@ -12,7 +12,7 @@ const CONFIG = {
 const EVENTS = [
   {
     id: 'codestorm',
-    name: 'CodeStorm',
+    name: 'Tech quiz',
     tag: 'Competitive coding',
     category: 'coding',
     desc: 'Three hours, eight algorithmic problems, one live leaderboard. Solo or in pairs. Battle against the best coders on campus.',
@@ -48,7 +48,7 @@ const EVENTS = [
   },
   {
     id: 'hackship',
-    name: 'Hack and Ship',
+    name: 'Paper Xpress',
     tag: 'Mini hackathon',
     category: 'coding',
     desc: 'Build a working web/mobile or AI prototype in four hours around a surprise theme revealed at kickoff. Pitch live to judges.',
@@ -84,7 +84,7 @@ const EVENTS = [
   },
   {
     id: 'quiz',
-    name: 'Byte Me Tech Quiz',
+    name: 'Glitch hunt',
     tag: 'Tech Trivia',
     category: 'quiz',
     desc: 'Buzzers, rapid-fire rounds, audio-visual mysteries, and tech trivia that tests your knowledge of AI, computing history, and pop culture.',
@@ -119,7 +119,7 @@ const EVENTS = [
   },
   {
     id: 'pixel',
-    name: 'Pixel Clash',
+    name: 'Ai tech exhibit',
     tag: 'Esports Championship',
     category: 'esports',
     desc: 'High-octane 5v5 knockout tournament on high-spec lab PCs. Bring your A-game, team synergy, and competitive spirit.',
@@ -405,6 +405,8 @@ const EVENTS = [
   }
 ];
 
+EVENTS.splice(4);
+
 const DEPTS = [
   'Artificial Intelligence and Machine Learning',
   'Computer Science and Engineering',
@@ -494,7 +496,7 @@ function showToast(message, icon = '✓') {
 /* ---- Theme Toggle ---- */
 function initTheme() {
   const saved = localStorage.getItem('aimex_theme') || localStorage.getItem('amix_theme');
-  const currentTheme = saved || 'dark';
+  const currentTheme = saved || 'light';
 
   applyTheme(currentTheme);
 
@@ -562,13 +564,13 @@ function show(id) {
 }
 
 /* ---- Event Filtering & Search State ---- */
-let currentCat = 'all';
+let currentEvent = 'all';
 let searchQuery = '';
 let activeViewMode = 'cards'; // 'cards' | 'timeline'
 
 function filterEvents() {
   return [...EVENTS].filter(e => {
-    const matchesCat = currentCat === 'all' || e.category === currentCat;
+    const matchesEvent = currentEvent === 'all' || e.id === currentEvent;
     const query = searchQuery.trim().toLowerCase();
     const matchesSearch =
       !query ||
@@ -576,7 +578,7 @@ function filterEvents() {
       e.tag.toLowerCase().includes(query) ||
       e.desc.toLowerCase().includes(query) ||
       e.venue.toLowerCase().includes(query);
-    return matchesCat && matchesSearch;
+    return matchesEvent && matchesSearch;
   });
 }
 
@@ -1305,7 +1307,7 @@ document.addEventListener('DOMContentLoaded', () => {
     chip.addEventListener('click', () => {
       $$('#catChips .chip').forEach(c => c.classList.remove('active'));
       chip.classList.add('active');
-      currentCat = chip.dataset.cat;
+      currentEvent = chip.dataset.event || 'all';
       renderEvents();
       renderTimeline();
     });
@@ -1314,11 +1316,11 @@ document.addEventListener('DOMContentLoaded', () => {
   // Reset filter button
   $('#resetFiltersBtn').onclick = () => {
     searchQuery = '';
-    currentCat = 'all';
+    currentEvent = 'all';
     searchInput.value = '';
     clearBtn.hidden = true;
     $$('#catChips .chip').forEach(c => {
-      c.classList.toggle('active', c.dataset.cat === 'all');
+      c.classList.toggle('active', (c.dataset.event || 'all') === 'all');
     });
     renderEvents();
     renderTimeline();

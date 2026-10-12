@@ -1,7 +1,7 @@
 [
   {
     "id": "codestorm",
-    "name": "CodeStorm",
+    "name": "Tech quiz",
     "tag": "Competitive coding",
     "category": "coding",
     "desc": "Three hours, eight algorithmic problems, one live leaderboard. Solo or in pairs. Battle against the best coders on campus.",
@@ -38,7 +38,7 @@
   },
   {
     "id": "hackship",
-    "name": "Hack and Ship",
+    "name": "Paper Xpress",
     "tag": "Mini hackathon",
     "category": "coding",
     "desc": "Build a working web/mobile or AI prototype in four hours around a surprise theme revealed at kickoff. Pitch live to judges.",
@@ -75,7 +75,7 @@
   },
   {
     "id": "quiz",
-    "name": "Byte Me Tech Quiz",
+    "name": "Glitch hunt",
     "tag": "Tech Trivia",
     "category": "quiz",
     "desc": "Buzzers, rapid-fire rounds, audio-visual mysteries, and tech trivia that tests your knowledge of AI, computing history, and pop culture.",
@@ -111,7 +111,7 @@
   },
   {
     "id": "pixel",
-    "name": "Pixel Clash",
+    "name": "Ai tech exhibit",
     "tag": "Esports Championship",
     "category": "esports",
     "desc": "High-octane 5v5 knockout tournament on high-spec lab PCs. Bring your A-game, team synergy, and competitive spirit.",
@@ -143,43 +143,6 @@
       "id": "ign",
       "label": "Team Captain's In-Game Tag (IGN)",
       "type": "text"
-    }
-  },
-  {
-    "id": "design",
-    "name": "Design Sprint",
-    "tag": "UI/UX Design",
-    "category": "uiux",
-    "desc": "Redesign a real broken campus mobile or web app screen in 90 minutes. Present your visual hierarchy, user flow, and design rationale to judges.",
-    "date": "2026-10-30T15:00",
-    "venue": "Lab 3",
-    "fee": 100,
-    "min": 1,
-    "max": 1,
-    "c": "#7A4DFF",
-    "on": "#ffffff",
-    "totalSlots": 35,
-    "slotsLeft": 9,
-    "prizes": [
-      { "place": "1st Prize", "amount": "₹4,000", "rank": "gold" },
-      { "place": "2nd Prize", "amount": "₹2,500", "rank": "silver" },
-      { "place": "3rd Prize", "amount": "₹1,000", "rank": "bronze" }
-    ],
-    "rules": [
-      "Solo participation only.",
-      "Time limit: 90 minutes for designing + 3 minutes for pitch.",
-      "Any UI tool (Figma, Adobe XD, Penpot) or high-fidelity hand sketch is permitted.",
-      "Evaluated on Usability, Aesthetics, Accessibility, and Design Rationale."
-    ],
-    "coordinators": [
-      { "name": "Ananya Deshmukh", "role": "Design Lead", "phone": "+91 98765 43218" },
-      { "name": "Manish Gupta", "role": "Event Coordinator", "phone": "+91 98765 43219" }
-    ],
-    "extra": {
-      "id": "tool",
-      "label": "Primary design tool you will use",
-      "type": "select",
-      "opts": ["Figma", "Adobe XD", "Penpot", "Sketch", "Other"]
     }
   }
 ]

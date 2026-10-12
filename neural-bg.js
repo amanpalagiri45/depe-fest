@@ -92,12 +92,12 @@
       if (isDarkMode()) {
         return {
           nodeDefault: 'rgba(91, 139, 255, 0.75)',
-          nodeSpecial: 'rgba(16, 231, 157, 0.95)',
-          nodeGlow: 'rgba(16, 231, 157, 0.35)',
-          linePrimary: '16, 231, 157',
+          nodeSpecial: 'rgba(217, 70, 239, 0.95)',
+          nodeGlow: 'rgba(217, 70, 239, 0.35)',
+          linePrimary: '217, 70, 239',
           lineSecondary: '91, 139, 255',
           pulse: 'rgba(255, 255, 255, 0.95)',
-          mouseLine: '16, 231, 157'
+          mouseLine: '217, 70, 239'
         };
       } else {
         return {
