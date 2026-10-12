@@ -29,6 +29,7 @@
       </button>
 
       <div class="header-actions">
+        <button class="btn sm ghost" id="letterPortalBtn" type="button">Generate Letter</button>
         <button class="admin-toggle" id="adminBtn" aria-label="Open admin dashboard">Admin</button>
         <button class="theme-toggle" id="themeBtn" aria-label="Toggle light and dark mode" title="Toggle theme">
           <span id="themeIcon">🌙</span>
@@ -59,7 +60,7 @@
       </div>
 
       <div class="facts">
-        <span>📅 Friday, 30 October 2026</span>
+        <span>📅 Thursday, 5 November 2026</span>
         <span>📍 Seminar Hall & Tech Labs</span>
         <span>🎓 Open to all branches & colleges</span>
       </div>
@@ -254,6 +255,73 @@
         <div id="doneBox"></div>
       </section>
 
+      <section class="view" id="v-letter" aria-labelledby="letterHeading" hidden>
+        <div class="sec-h">
+          <div>
+            <h2 id="letterHeading" tabindex="-1">Student Letter Generator</h2>
+            <p>Enter your details to create a fest event permission letter you can print.</p>
+          </div>
+        </div>
+
+        <div class="letter-layout">
+          <form class="panel letter-form" id="letterForm">
+            <div class="letter-fields">
+              <div class="f">
+                <label for="letterStudentName">Student Name</label>
+                <input id="letterStudentName" name="studentName" autocomplete="name" required>
+              </div>
+              <div class="f">
+                <label for="letterRollNumber">Roll Number</label>
+                <input id="letterRollNumber" name="rollNumber" required>
+              </div>
+              <div class="f">
+                <label for="letterBranch">Branch</label>
+                <input id="letterBranch" name="branch" required>
+              </div>
+              <div class="f">
+                <label for="letterDepartment">Department</label>
+                <input id="letterDepartment" name="department" required>
+              </div>
+              <div class="f">
+                <label for="letterYear">Year</label>
+                <select id="letterYear" name="year" required>
+                  <option value="">Select year</option>
+                  <option>1st Year</option>
+                  <option>2nd Year</option>
+                  <option>3rd Year</option>
+                  <option>4th Year</option>
+                </select>
+              </div>
+              <div class="f">
+                <label for="letterSection">Section</label>
+                <input id="letterSection" name="section" required>
+              </div>
+              <div class="f letter-event-field">
+                <label for="letterEvent">Event Name</label>
+                <select id="letterEvent" name="eventName" required>
+                  <option value="">Select event</option>
+                </select>
+              </div>
+            </div>
+            <div class="registration-check-actions">
+              <button class="btn sm ghost" id="checkRegistrationBtn" type="button">Check Registration</button>
+              <p class="registration-check" id="registrationCheckStatus" role="status" aria-live="polite" hidden></p>
+            </div>
+            <button class="btn" type="submit">Generate Letter</button>
+          </form>
+
+          <section class="letter-result" id="letterResult" aria-live="polite" hidden>
+            <div class="letter-result-toolbar">
+              <h3>Your letter</h3>
+              <button class="btn sm" id="downloadLetterBtn" type="button">Download PDF</button>
+              <button class="btn sm" id="printLetterBtn" type="button">Print Letter</button>
+            </div>
+            <article class="letter-paper" id="letterPreview"></article>
+            <p class="letter-note">Review your details before printing. This is a student-generated request letter and is not an official approval.</p>
+          </section>
+        </div>
+      </section>
+
     </div>
   </main>
 
@@ -340,6 +408,7 @@
   </footer>
 
   <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
+  <script src="/node_modules/jspdf/dist/jspdf.umd.min.js"></script>
   <script src="neural-bg.js"></script>
   <script src="app.js"></script>
 </body>

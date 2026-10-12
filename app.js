@@ -6,7 +6,7 @@ const CONFIG = {
   fest: 'AIMEX 2026',
   upiId: 'deptfest@upi',
   payee: 'AIMEX 2026 Dept Fest',
-  festDate: '2026-10-30T09:00:00'
+  festDate: '2026-11-05T09:00:00'
 };
 
 const EVENTS = [
@@ -16,7 +16,7 @@ const EVENTS = [
     tag: 'Competitive coding',
     category: 'coding',
     desc: 'Three hours, eight algorithmic problems, one live leaderboard. Solo or in pairs. Battle against the best coders on campus.',
-    date: '2026-10-30T11:30',
+    date: '2026-11-05T11:30',
     venue: 'Lab 2',
     fee: 50,
     min: 1,
@@ -52,7 +52,7 @@ const EVENTS = [
     tag: 'Mini hackathon',
     category: 'coding',
     desc: 'Build a working web/mobile or AI prototype in four hours around a surprise theme revealed at kickoff. Pitch live to judges.',
-    date: '2026-10-30T09:30',
+    date: '2026-11-05T09:30',
     venue: 'Seminar Hall',
     fee: 50,
     min: 2,
@@ -88,7 +88,7 @@ const EVENTS = [
     tag: 'Tech Trivia',
     category: 'quiz',
     desc: 'Buzzers, rapid-fire rounds, audio-visual mysteries, and tech trivia that tests your knowledge of AI, computing history, and pop culture.',
-    date: '2026-10-30T10:30',
+    date: '2026-11-05T10:30',
     venue: 'Seminar Hall',
     fee: 50,
     min: 2,
@@ -123,7 +123,7 @@ const EVENTS = [
     tag: 'Esports Championship',
     category: 'esports',
     desc: 'High-octane 5v5 knockout tournament on high-spec lab PCs. Bring your A-game, team synergy, and competitive spirit.',
-    date: '2026-10-30T12:30',
+    date: '2026-11-05T12:30',
     venue: 'Gaming Lab',
     fee: 50,
     min: 4,
@@ -158,7 +158,7 @@ const EVENTS = [
     tag: 'UI/UX Design',
     category: 'uiux',
     desc: 'Redesign a real broken campus mobile or web app screen in 90 minutes. Present your visual hierarchy, user flow, and design rationale to judges.',
-    date: '2026-10-30T15:00',
+    date: '2026-11-05T15:00',
     venue: 'Lab 3',
     fee: 50,
     min: 1,
@@ -194,7 +194,7 @@ const EVENTS = [
     tag: 'Public Speaking',
     category: 'nontech',
     desc: 'A high-energy speaking challenge where teams argue, rebut, and persuade with clarity, confidence, and composure.',
-    date: '2026-10-30T09:00',
+    date: '2026-11-05T09:00',
     venue: 'Auditorium',
     fee: 50,
     min: 2,
@@ -230,7 +230,7 @@ const EVENTS = [
     tag: 'Dance Battle',
     category: 'nontech',
     desc: 'Showcase your rhythm, stage presence, and creative choreography in an electrifying dance battle.',
-    date: '2026-10-30T11:00',
+    date: '2026-11-05T11:00',
     venue: 'Open Stage',
     fee: 50,
     min: 2,
@@ -266,7 +266,7 @@ const EVENTS = [
     tag: 'Music & Singing',
     category: 'nontech',
     desc: 'From soulful vocals to energetic performances, bring your melody and sing your way to the spotlight.',
-    date: '2026-10-30T12:30',
+    date: '2026-11-05T12:30',
     venue: 'Main Stage',
     fee: 50,
     min: 1,
@@ -302,7 +302,7 @@ const EVENTS = [
     tag: 'Art & Craft',
     category: 'nontech',
     desc: 'Transform blank surfaces into vibrant expressions with your imagination, colours, and creative craft skills.',
-    date: '2026-10-30T10:00',
+    date: '2026-11-05T10:00',
     venue: 'Creative Studio',
     fee: 50,
     min: 1,
@@ -338,7 +338,7 @@ const EVENTS = [
     tag: 'Photography',
     category: 'nontech',
     desc: 'Capture compelling campus stories through a lens and show the world how moments become memories.',
-    date: '2026-10-30T15:30',
+    date: '2026-11-05T15:30',
     venue: 'Campus Trails',
     fee: 50,
     min: 1,
@@ -374,7 +374,7 @@ const EVENTS = [
     tag: 'Campus Adventure',
     category: 'nontech',
     desc: 'Follow clues, solve riddles, and race through the campus in a creative scavenger hunt filled with fun.',
-    date: '2026-10-30T13:00',
+    date: '2026-11-05T13:00',
     venue: 'Campus Grounds',
     fee: 50,
     min: 2,
@@ -514,6 +514,208 @@ function applyTheme(theme) {
   const icon = $('#themeIcon');
   if (icon) {
     icon.textContent = theme === 'dark' ? '☀️' : '🌙';
+  }
+}
+
+async function checkLetterRegistration() {
+  const nameInput = $('#letterStudentName');
+  const rollInput = $('#letterRollNumber');
+  const eventInput = $('#letterEvent');
+  const statusEl = $('#registrationCheckStatus');
+  const button = $('#checkRegistrationBtn');
+
+  for (const input of [nameInput, rollInput, eventInput]) {
+    if (!input.checkValidity()) {
+      input.reportValidity();
+      return null;
+    }
+  }
+
+  statusEl.hidden = false;
+  statusEl.dataset.state = 'checking';
+  statusEl.textContent = 'Checking the registration records…';
+  button.disabled = true;
+
+  try {
+    const response = await fetch('/api/registration-status', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        name: nameInput.value.trim(),
+        roll: rollInput.value.trim(),
+        eventId: eventInput.value
+      })
+    });
+    const result = await response.json();
+    if (!response.ok) {
+      throw new Error(result.error || 'Registration status could not be checked.');
+    }
+
+    if (!result.registered) {
+      statusEl.dataset.state = 'not-found';
+      statusEl.textContent = 'No registration was found for this name, roll number, and event.';
+    } else if (/confirmed/i.test(result.status || '')) {
+      statusEl.dataset.state = 'confirmed';
+      statusEl.textContent = 'Registration found and payment confirmed.';
+    } else {
+      statusEl.dataset.state = 'pending';
+      statusEl.textContent = `Registration found, but payment is pending (${result.status || 'Payment Pending'}).`;
+    }
+    return result;
+  } catch (error) {
+    console.error('Could not check student registration:', error);
+    statusEl.dataset.state = 'error';
+    statusEl.textContent = 'Unable to check registration right now. Please try again.';
+    return null;
+  } finally {
+    button.disabled = false;
+  }
+}
+
+function downloadPermissionLetter(data) {
+  if (!window.jspdf || typeof window.jspdf.jsPDF !== 'function') {
+    showToast('PDF generator is unavailable. Refresh the page and try again.', '⚠️');
+    return;
+  }
+
+  try {
+    const pdf = new window.jspdf.jsPDF({ unit: 'mm', format: 'a4' });
+    const pageWidth = pdf.internal.pageSize.getWidth();
+    const pageHeight = pdf.internal.pageSize.getHeight();
+    const left = 16;
+    const right = pageWidth - left;
+    const contentWidth = right - left;
+    let y = 17;
+
+    const centerText = (text, atY) => pdf.text(text, pageWidth / 2, atY, { align: 'center' });
+    const addPageIfNeeded = height => {
+      if (y + height > pageHeight - 16) {
+        pdf.addPage();
+        y = 18;
+      }
+    };
+    const drawSection = (title, rows) => {
+      addPageIfNeeded(16);
+      pdf.setFillColor(232, 240, 244);
+      pdf.rect(left, y, contentWidth, 7, 'F');
+      pdf.setTextColor(35, 52, 68);
+      pdf.setFont('helvetica', 'bold');
+      pdf.setFontSize(9);
+      pdf.text(title, left + 3, y + 4.8);
+      y += 7;
+
+      const labelWidth = 36;
+      const valueWidth = contentWidth - labelWidth - 6;
+      rows.forEach(([label, value]) => {
+        const labelLines = pdf.splitTextToSize(String(label), labelWidth - 5);
+        const valueLines = pdf.splitTextToSize(String(value), valueWidth - 5);
+        const lineCount = Math.max(labelLines.length, valueLines.length);
+        const rowHeight = Math.max(8, lineCount * 4.3 + 3);
+        addPageIfNeeded(rowHeight);
+        pdf.setDrawColor(190, 196, 201);
+        pdf.setLineWidth(0.25);
+        pdf.rect(left, y, contentWidth, rowHeight);
+        pdf.line(left + labelWidth, y, left + labelWidth, y + rowHeight);
+        pdf.setFont('times', 'bold');
+        pdf.setFontSize(9);
+        pdf.setTextColor(35, 45, 55);
+        pdf.text(labelLines, left + 3, y + 5.2);
+        pdf.setFont('times', 'normal');
+        pdf.text(valueLines, left + labelWidth + 3, y + 5.2);
+        y += rowHeight;
+      });
+      y += 5;
+    };
+
+    pdf.setTextColor(190, 0, 0);
+    pdf.setFont('times', 'bold');
+    pdf.setFontSize(19);
+    centerText('MITS', y);
+    y += 6;
+    pdf.setTextColor(35, 76, 127);
+    pdf.setFont('times', 'bold');
+    pdf.setFontSize(10);
+    centerText('MADANAPALLE INSTITUTE OF TECHNOLOGY & SCIENCE', y);
+    y += 4;
+    pdf.setFont('times', 'italic');
+    pdf.setFontSize(8);
+    centerText('(Deemed to be University)', y);
+    y += 5;
+    pdf.setFont('times', 'bold');
+    pdf.setFontSize(8);
+    centerText(CONFIG.dept.toUpperCase(), y);
+    y += 5;
+    pdf.setDrawColor(100, 100, 100);
+    pdf.line(left, y, right, y);
+    y += 6;
+    pdf.setTextColor(25, 35, 45);
+    pdf.setFont('times', 'bold');
+    pdf.setFontSize(14);
+    centerText('STUDENT PERMISSION LETTER', y);
+    y += 4;
+    pdf.setTextColor(190, 0, 0);
+    pdf.setFontSize(9);
+    centerText(CONFIG.fest, y);
+    y += 10;
+
+    pdf.setTextColor(45, 55, 65);
+    pdf.setFont('times', 'normal');
+    pdf.setFontSize(9);
+    pdf.text(`Date: ${data.today}`, right, y, { align: 'right' });
+    y += 10;
+    pdf.setFont('times', 'bold');
+    pdf.text('To Whom It May Concern,', left, y);
+    y += 6;
+    pdf.setFont('times', 'normal');
+    const intro = `This letter is to request permission for the student listed below to attend and participate in ${CONFIG.fest}, organized by ${CONFIG.dept}, on ${data.eventDate}. Please review and complete the institutional approval below.`;
+    const introLines = pdf.splitTextToSize(intro, contentWidth);
+    pdf.text(introLines, left, y);
+    y += introLines.length * 4.4 + 5;
+
+    drawSection('STUDENT DETAILS', [
+      ['Student Name', data.studentName],
+      ['Roll Number', data.rollNumber],
+      ['Branch', data.branch],
+      ['Department', data.department],
+      ['Year', data.year],
+      ['Section', data.section]
+    ]);
+    drawSection('EVENT DETAILS', [
+      ['Event Name', data.eventName],
+      ['Date', data.eventDate],
+      ['Time', data.eventTime],
+      ['Venue', data.venue]
+    ]);
+
+    pdf.setFont('times', 'normal');
+    pdf.setFontSize(9);
+    const approvalText = 'Kindly permit the above student to attend and participate in the event on the mentioned date. This generated letter is a request and requires institutional verification and approval.';
+    const approvalLines = pdf.splitTextToSize(approvalText, contentWidth);
+    addPageIfNeeded(approvalLines.length * 4.5 + 30);
+    pdf.text(approvalLines, left, y);
+    y += approvalLines.length * 4.5 + 5;
+    pdf.text('Thank you.', left, y);
+    y += 9;
+
+    addPageIfNeeded(20);
+    const signatureWidth = contentWidth / 2;
+    const signatureHeight = 17;
+    pdf.setDrawColor(190, 196, 201);
+    pdf.rect(left, y, signatureWidth, signatureHeight);
+    pdf.rect(left + signatureWidth, y, signatureWidth, signatureHeight);
+    pdf.setFont('times', 'bold');
+    pdf.setFontSize(8);
+    pdf.text('Student / Participant Signature', left + signatureWidth / 2, y + 10, { align: 'center' });
+    pdf.text(['HOD / Faculty Coordinator', 'Signature & Seal'], left + signatureWidth * 1.5, y + 7, { align: 'center' });
+
+    const safeName = `${data.rollNumber}_${data.eventName}`
+      .replace(/[^\w-]+/g, '_')
+      .replace(/^_+|_+$/g, '');
+    pdf.save(`Permission_Letter_${safeName || 'AIMEX_2026'}.pdf`);
+    showToast('Permission letter PDF downloaded.', '📄');
+  } catch (error) {
+    console.error('Could not generate permission letter PDF:', error);
+    showToast('Could not generate the PDF. Please try again.', '⚠️');
   }
 }
 
@@ -994,7 +1196,7 @@ function openForm(id) {
 }
 
 function formSubmit(e) {
-  return function (evt) {
+  return async function (evt) {
     evt.preventDefault();
     const fd = new FormData(evt.target);
     const data = Object.fromEntries(fd.entries());
@@ -1031,7 +1233,6 @@ function formSubmit(e) {
     if (!ok) return;
 
     const reg = {
-      id: 'AIMEX-' + Math.random().toString(36).substring(2, 8).toUpperCase(),
       eventId: e.id,
       name: data.name.trim(),
       email: data.email.trim(),
@@ -1048,7 +1249,24 @@ function formSubmit(e) {
       timestamp: new Date().toISOString()
     };
 
-    showPay(reg);
+    const submitButton = evt.target.querySelector('button[type="submit"]');
+    submitButton.disabled = true;
+    try {
+      const response = await fetch('/api/register', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(reg)
+      });
+      const result = await response.json();
+      if (!response.ok || !result.registration) {
+        throw new Error(result.error || 'Registration could not be saved.');
+      }
+      showPay(result.registration);
+    } catch (error) {
+      console.error('Could not save registration:', error);
+      showToast(error.message || 'Registration could not be saved. Please try again.', '⚠️');
+      submitButton.disabled = false;
+    }
   };
 }
 
@@ -1090,7 +1308,7 @@ function showPay(reg) {
     <button class="btn block" id="confirmPayBtn">I have completed payment ✓</button>
   `;
 
-  $('#confirmPayBtn').onclick = () => {
+  $('#confirmPayBtn').onclick = async () => {
     const utr = $('#utr').value.trim();
     if (!utr || utr.length < 6) {
       $('#utr-e').textContent = 'Please enter a valid UPI Reference / UTR number.';
@@ -1098,13 +1316,29 @@ function showPay(reg) {
       return;
     }
 
-    reg.utr = utr;
-    reg.status = 'Confirmed (Verified)';
-    const current = store.get().filter(r => r.id !== reg.id);
-    store.set([reg, ...current]);
+    const payButton = $('#confirmPayBtn');
+    payButton.disabled = true;
+    try {
+      const response = await fetch('/api/pay', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ id: reg.id, utr })
+      });
+      const result = await response.json();
+      if (!response.ok || !result.registration) {
+        throw new Error(result.error || 'Payment confirmation could not be saved.');
+      }
 
-    showDone(reg, true);
-    triggerConfetti();
+      const confirmedRegistration = result.registration;
+      const current = store.get().filter(r => r.id !== confirmedRegistration.id);
+      store.set([confirmedRegistration, ...current]);
+      showDone(confirmedRegistration, true);
+      triggerConfetti();
+    } catch (error) {
+      console.error('Could not confirm payment:', error);
+      $('#utr-e').textContent = error.message || 'Payment confirmation could not be saved. Please try again.';
+      payButton.disabled = false;
+    }
   };
 
   show('v-form');
@@ -1159,7 +1393,7 @@ function showDone(reg, fresh = true) {
         <div>
           <small style="color:var(--muted);text-transform:uppercase;letter-spacing:0.04em">Registration ID</small>
           <div class="tk-id" id="ticketIdText">${reg.id}</div>
-          <small style="color:var(--muted)">Show this QR pass at the entrance on Oct 10, 2026.</small>
+          <small style="color:var(--muted)">Show this QR pass at the entrance on 5 November 2026.</small>
         </div>
       </div>
     </article>
@@ -1281,6 +1515,127 @@ document.addEventListener('DOMContentLoaded', () => {
   renderEvents();
   renderTimeline();
   show('v-events');
+
+  const letterEvent = $('#letterEvent');
+  EVENTS.forEach(event => {
+    const option = document.createElement('option');
+    option.value = event.id;
+    option.textContent = event.name;
+    letterEvent.appendChild(option);
+  });
+
+  $('#letterPortalBtn').addEventListener('click', () => show('v-letter'));
+  $('#checkRegistrationBtn').addEventListener('click', checkLetterRegistration);
+  ['letterStudentName', 'letterRollNumber', 'letterEvent'].forEach(id => {
+    $(`#${id}`).addEventListener('input', () => {
+      const statusEl = $('#registrationCheckStatus');
+      statusEl.hidden = true;
+      statusEl.textContent = '';
+      delete statusEl.dataset.state;
+    });
+    $(`#${id}`).addEventListener('change', () => {
+      const statusEl = $('#registrationCheckStatus');
+      statusEl.hidden = true;
+      statusEl.textContent = '';
+      delete statusEl.dataset.state;
+    });
+  });
+
+  $('#letterForm').addEventListener('submit', async e => {
+    e.preventDefault();
+    if (!e.currentTarget.reportValidity()) return;
+
+    const formData = new FormData(e.currentTarget);
+    const studentName = String(formData.get('studentName')).trim();
+    const rollNumber = String(formData.get('rollNumber')).trim();
+    const branch = String(formData.get('branch')).trim();
+    const department = String(formData.get('department')).trim();
+    const year = String(formData.get('year')).trim();
+    const section = String(formData.get('section')).trim();
+    const event = EVENTS.find(item => item.id === formData.get('eventName'));
+    if (!event) {
+      letterEvent.setCustomValidity('Please select a valid fest event.');
+      letterEvent.reportValidity();
+      return;
+    }
+    letterEvent.setCustomValidity('');
+    await checkLetterRegistration();
+
+    const today = new Date().toLocaleDateString('en-IN', {
+      day: 'numeric',
+      month: 'long',
+      year: 'numeric'
+    });
+    const eventDate = new Date(event.date).toLocaleDateString('en-IN', {
+      day: 'numeric',
+      month: 'long',
+      year: 'numeric'
+    });
+    const eventTime = fmtT(event.date);
+    const letterData = {
+      today,
+      studentName,
+      rollNumber,
+      branch,
+      department,
+      year,
+      section,
+      eventName: event.name,
+      eventDate,
+      eventTime,
+      venue: event.venue
+    };
+
+    $('#letterPreview').innerHTML = `
+      <header class="letter-heading">
+        <h2>MITS</h2>
+        <p class="letter-institute">MADANAPALLE INSTITUTE OF TECHNOLOGY &amp; SCIENCE</p>
+        <p class="letter-subtitle">(Deemed to be University)</p>
+        <p class="letter-department">${esc(CONFIG.dept.toUpperCase())}</p>
+        <hr>
+        <h3>STUDENT PERMISSION LETTER</h3>
+        <p class="letter-fest">${esc(CONFIG.fest)}</p>
+      </header>
+      <p class="letter-date">Date: ${esc(today)}</p>
+      <p><strong>To Whom It May Concern,</strong></p>
+      <p>This letter is to request permission for the student listed below to attend and participate in ${esc(CONFIG.fest)}, organized by ${esc(CONFIG.dept)}, on ${esc(eventDate)}. Please review and complete the institutional approval below.</p>
+      <h4 class="letter-section-title">STUDENT DETAILS</h4>
+      <table class="letter-details">
+        <tbody>
+          <tr><th>Student Name</th><td>${esc(studentName)}</td></tr>
+          <tr><th>Roll Number</th><td>${esc(rollNumber)}</td></tr>
+          <tr><th>Branch</th><td>${esc(branch)}</td></tr>
+          <tr><th>Department</th><td>${esc(department)}</td></tr>
+          <tr><th>Year</th><td>${esc(year)}</td></tr>
+          <tr><th>Section</th><td>${esc(section)}</td></tr>
+        </tbody>
+      </table>
+      <h4 class="letter-section-title">EVENT DETAILS</h4>
+      <table class="letter-details">
+        <tbody>
+          <tr><th>Event Name</th><td>${esc(event.name)}</td></tr>
+          <tr><th>Date</th><td>${esc(eventDate)}</td></tr>
+          <tr><th>Time</th><td>${esc(eventTime)}</td></tr>
+          <tr><th>Venue</th><td>${esc(event.venue)}</td></tr>
+        </tbody>
+      </table>
+      <p class="letter-approval-note">Kindly permit the above student to attend and participate in the event on the mentioned date. This generated letter is a request and requires institutional verification and approval.</p>
+      <p>Thank you.</p>
+      <div class="letter-signatures">
+        <div>Student / Participant Signature</div>
+        <div>HOD / Faculty Coordinator<br>Signature &amp; Seal</div>
+      </div>
+    `;
+    $('#downloadLetterBtn').onclick = () => downloadPermissionLetter(letterData);
+    $('#letterResult').hidden = false;
+    $('#letterResult').scrollIntoView({ behavior: 'smooth', block: 'start' });
+  });
+
+  $('#printLetterBtn').addEventListener('click', () => {
+    document.body.classList.add('print-letter');
+    window.print();
+  });
+  window.addEventListener('afterprint', () => document.body.classList.remove('print-letter'));
 
   // Search input
   const searchInput = $('#eventSearch');

@@ -56,7 +56,7 @@ const CONFIG = {
   fest: 'AIMEX 2026',
   upiId: 'deptfest@upi',              // Replace with your fest UPI ID
   payee: 'AIMEX 2026 Dept Fest',
-  festDate: '2026-10-10T09:00:00'     // Date for the live countdown
+  festDate: '2026-11-05T09:00:00'     // Date for the live countdown
 };
 ```
 

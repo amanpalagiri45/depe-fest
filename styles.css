@@ -1672,6 +1672,202 @@ main {
   box-shadow: var(--shadow-sm);
 }
 
+.letter-layout {
+  display: grid;
+  gap: 24px;
+  align-items: start;
+}
+
+.letter-form {
+  max-width: none;
+}
+
+.letter-fields {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 0 18px;
+}
+
+.letter-event-field {
+  grid-column: 1 / -1;
+}
+
+.registration-check-actions {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 8px 14px;
+  margin: 0 0 18px;
+}
+
+.registration-check {
+  flex: 1 1 100%;
+  margin: 0;
+  padding: 10px 12px;
+  border: 1px solid var(--line);
+  border-radius: var(--radius-sm);
+  color: var(--ink-secondary);
+  font-size: 14px;
+}
+
+.registration-check[data-state="confirmed"] {
+  border-color: #16865D;
+  background: #E4F8EF;
+  color: #126B4B;
+}
+
+.registration-check[data-state="pending"],
+.registration-check[data-state="not-found"] {
+  border-color: #D97706;
+  background: #FEF3C7;
+  color: #8A4B08;
+}
+
+.registration-check[data-state="error"] {
+  border-color: var(--bad);
+  background: var(--bad-bg);
+  color: var(--bad);
+}
+
+.letter-result {
+  min-width: 0;
+}
+
+.letter-result-toolbar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  margin-bottom: 14px;
+}
+
+.letter-result-toolbar h3 {
+  font-size: 22px;
+}
+
+.letter-paper {
+  padding: clamp(24px, 5vw, 48px);
+  background: #fff;
+  color: #222;
+  border: 1px solid var(--line);
+  border-radius: var(--radius-md);
+  box-shadow: var(--shadow-sm);
+  font: 400 15px/1.8 Georgia, "Times New Roman", serif;
+}
+
+.letter-paper p {
+  margin: 0 0 18px;
+}
+
+.letter-paper .letter-date {
+  text-align: right;
+}
+
+.letter-heading {
+  text-align: center;
+}
+
+.letter-heading h2 {
+  color: #be0000;
+  font: 700 26px/1.15 Georgia, "Times New Roman", serif;
+}
+
+.letter-heading p {
+  margin: 3px 0;
+}
+
+.letter-heading .letter-institute {
+  color: #234c7f;
+  font-size: 13px;
+  font-weight: 700;
+}
+
+.letter-heading .letter-subtitle {
+  font-size: 10px;
+  font-style: italic;
+}
+
+.letter-heading .letter-department {
+  font-size: 10px;
+  font-weight: 700;
+}
+
+.letter-heading hr {
+  border: 0;
+  border-top: 1px solid #888;
+  margin: 12px 0 8px;
+}
+
+.letter-heading h3 {
+  font: 700 18px/1.25 Georgia, "Times New Roman", serif;
+}
+
+.letter-heading .letter-fest {
+  color: #be0000;
+  font-size: 12px;
+  font-weight: 700;
+}
+
+.letter-paper .letter-date {
+  margin-top: 18px;
+}
+
+.letter-section-title {
+  margin: 18px 0 0;
+  padding: 8px 10px;
+  background: #e8f0f4;
+  color: #233444;
+  font-size: 12px;
+}
+
+.letter-details {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 13px;
+  line-height: 1.45;
+}
+
+.letter-details th,
+.letter-details td {
+  border: 1px solid #c8cdd1;
+  padding: 7px 9px;
+  text-align: left;
+  overflow-wrap: anywhere;
+}
+
+.letter-details th {
+  width: 32%;
+}
+
+.letter-paper .letter-approval-note {
+  margin-top: 16px;
+}
+
+.letter-signatures {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  margin-top: 28px;
+}
+
+.letter-signatures div {
+  min-height: 62px;
+  padding: 30px 8px 8px;
+  border: 1px solid #c8cdd1;
+  text-align: center;
+  font-size: 11px;
+  font-weight: 700;
+}
+
+.letter-signatures div + div {
+  border-left: 0;
+}
+
+.letter-note {
+  color: var(--muted);
+  font-size: 13px;
+  margin: 12px 0 0;
+}
+
 .back {
   background: none;
   border: 0;
@@ -2094,6 +2290,40 @@ footer {
 
 /* ================= PRINT STYLES ================= */
 @media print {
+  body.print-letter * {
+    visibility: hidden !important;
+  }
+
+  body.print-letter #letterPreview,
+  body.print-letter #letterPreview * {
+    visibility: visible !important;
+  }
+
+  body.print-letter #letterPreview {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    padding: 0;
+    border: 0;
+    border-radius: 0;
+    box-shadow: none;
+    font-size: 12pt;
+  }
+
+  body.print-letter .letter-paper table,
+  body.print-letter .letter-paper tr,
+  body.print-letter .letter-paper th,
+  body.print-letter .letter-paper td,
+  body.print-letter .letter-section-title,
+  body.print-letter .letter-signatures div {
+    -webkit-print-color-adjust: exact;
+    print-color-adjust: exact;
+  }
+
+  body.print-letter #letterPreview p {
+    margin-bottom: 16pt;
+  }
+
   header.top,
   .hero,
   footer,
@@ -2136,5 +2366,25 @@ footer {
 
   .cut {
     border-top: 2px dashed #000 !important;
+  }
+}
+
+@media (min-width: 900px) {
+  .letter-layout {
+    grid-template-columns: minmax(320px, 0.85fr) minmax(0, 1.15fr);
+  }
+}
+
+@media (max-width: 520px) {
+  .letter-fields {
+    grid-template-columns: 1fr;
+  }
+
+  .letter-event-field {
+    grid-column: auto;
+  }
+
+  .header-actions {
+    gap: 6px;
   }
 }

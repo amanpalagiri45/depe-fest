@@ -49,7 +49,7 @@ $CONFIG = @{
     fest    = "AIMEX 2026"
     upiId   = "deptfest@upi"
     payee   = "AIMEX 2026 Dept Fest"
-    festDate= "2026-10-10T09:00:00"
+    festDate= "2026-11-05T09:00:00"
 }
 
 while ($listener.IsListening) {
@@ -96,6 +96,58 @@ while ($listener.IsListening) {
             if ($rawUrl -eq "/api/events" -and $method -eq "GET") {
                 $evs = Get-EventsData
                 Send-Json $response 200 $evs
+                continue
+            }
+
+            # POST /api/registration-status
+            if ($rawUrl -eq "/api/registration-status" -and $method -eq "POST") {
+                $studentName = if ($bodyJson.name) { ([string]$bodyJson.name -replace '\s+', ' ').Trim() } else { "" }
+                $roll = if ($bodyJson.roll) { ([string]$bodyJson.roll).Trim().ToUpperInvariant() } else { "" }
+                $eventId = if ($bodyJson.eventId) { ([string]$bodyJson.eventId).Trim() } else { "" }
+                if ([string]::IsNullOrWhiteSpace($studentName) -or [string]::IsNullOrWhiteSpace($roll) -or [string]::IsNullOrWhiteSpace($eventId) -or $studentName.Length -gt 120 -or $roll.Length -gt 64) {
+                    Send-Json $response 400 @{ error = "Student name, roll number, and event are required." }
+                    continue
+                }
+
+                $evs = Get-EventsData
+                $targetEv = $evs | Where-Object { $_.id -eq $eventId } | Select-Object -First 1
+                if ($null -eq $targetEv) {
+                    Send-Json $response 400 @{ error = "Select a valid fest event." }
+                    continue
+                }
+
+                try {
+                    $allRegs = @(Get-RegistrationsData)
+                    $rollPattern = "(?i)(?<![A-Z0-9])$([regex]::Escape($roll))(?![A-Z0-9])"
+                    $matched = $null
+                    foreach ($registration in $allRegs) {
+                        if ($registration.eventId -ne $eventId) { continue }
+
+                        $registeredName = ([string]$registration.name -replace '\s+', ' ').Trim()
+                        $registeredRoll = ([string]$registration.roll).Trim().ToUpperInvariant()
+                        if ($registeredRoll -eq $roll -and $registeredName -eq $studentName) {
+                            $matched = $registration
+                            break
+                        }
+
+                        foreach ($member in ([string]$registration.members -split '\r?\n')) {
+                            if ($member -match $rollPattern) {
+                                $memberName = ($member -replace [regex]::Escape($roll), '' -replace '[()\[\]{}]', ' ' -replace '\s+', ' ').Trim([char[]]@(' ', '(', ')', '-', ':', ','))
+                                if ($memberName -eq $studentName) {
+                                    $matched = $registration
+                                    break
+                                }
+                            }
+                        }
+                        if ($null -ne $matched) { break }
+                    }
+
+                    $status = if ($null -ne $matched -and $matched.status) { [string]$matched.status } elseif ($null -ne $matched) { "Payment Pending" } else { $null }
+                    Send-Json $response 200 @{ registered = ($null -ne $matched); status = $status }
+                } catch {
+                    Write-Warning "Could not check student registration: $($_.Exception.Message)"
+                    Send-Json $response 500 @{ error = "Registration records are unavailable right now." }
+                }
                 continue
             }
 

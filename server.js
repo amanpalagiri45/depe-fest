@@ -39,7 +39,7 @@ const CONFIG = {
   fest: 'AIMEX 2026',
   upiId: 'deptfest@upi',
   payee: 'AIMEX 2026 Dept Fest',
-  festDate: '2026-10-30T09:00:00'
+  festDate: '2026-11-05T09:00:00'
 };
 
 const MIME_TYPES = {
@@ -261,6 +261,54 @@ const server = http.createServer(async (req, res) => {
 
     if (pathname === '/api/events' && method === 'GET') {
       return sendJson(res, 200, await getEvents());
+    }
+
+    if (pathname === '/api/registration-status' && method === 'POST') {
+      const body = await readBody(req);
+      const name = String(body.name || '').trim().replace(/\s+/g, ' ').toLowerCase();
+      const roll = String(body.roll || '').trim().toUpperCase();
+      const eventId = String(body.eventId || '').trim();
+      if (!name || !roll || !eventId || name.length > 120 || roll.length > 64) {
+        return sendJson(res, 400, { error: 'Student name, roll number, and event are required.' });
+      }
+
+      const events = await getEvents();
+      if (!events.some(event => event.id === eventId)) {
+        return sendJson(res, 400, { error: 'Select a valid fest event.' });
+      }
+
+      try {
+        const escapeRegex = value => value.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+        const rollPattern = new RegExp(`(^|[^A-Z0-9])${escapeRegex(roll)}($|[^A-Z0-9])`, 'i');
+        const registrations = await getRegistrations();
+        const matched = registrations.find(registration => {
+          if (registration.eventId !== eventId) return false;
+
+          const registeredName = String(registration.name || '').trim().replace(/\s+/g, ' ').toLowerCase();
+          const registeredRoll = String(registration.roll || '').trim().toUpperCase();
+          if (registeredRoll === roll && registeredName === name) return true;
+
+          return String(registration.members || '').split(/\r?\n/).some(member => {
+            if (!rollPattern.test(member)) return false;
+            const memberName = member
+              .replace(new RegExp(escapeRegex(roll), 'i'), '')
+              .replace(/[()[\]{}]/g, ' ')
+              .replace(/\s+/g, ' ')
+              .replace(/^[\s,:;-]+|[\s,:;-]+$/g, '')
+              .trim()
+              .toLowerCase();
+            return memberName === name;
+          });
+        });
+
+        return sendJson(res, 200, {
+          registered: Boolean(matched),
+          status: matched ? String(matched.status || 'Payment Pending') : null
+        });
+      } catch (error) {
+        console.error('Could not check student registration:', error);
+        return sendJson(res, 500, { error: 'Registration records are unavailable right now.' });
+      }
     }
 
     if (pathname === '/api/register' && method === 'POST') {
