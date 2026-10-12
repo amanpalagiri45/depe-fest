@@ -1507,7 +1507,12 @@ document.addEventListener('DOMContentLoaded', () => {
   // Populate config texts
   $('#fest').textContent = CONFIG.fest;
   $('#college').textContent = 'DEPT OF AI AND ML';
-  $('#heroT').textContent = CONFIG.fest;
+  const heroTitle = $('#heroT');
+  heroTitle.replaceChildren(document.createTextNode(`${CONFIG.fest} `));
+  const heroVersion = document.createElement('span');
+  heroVersion.className = 'hero-version';
+  heroVersion.textContent = '2.0';
+  heroTitle.append(heroVersion);
   $('#foot').textContent = CONFIG.college;
   $('#footFest').textContent = CONFIG.fest;
 
