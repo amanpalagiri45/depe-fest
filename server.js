@@ -9,6 +9,7 @@ const fs = require('fs');
 const path = require('path');
 const url = require('url');
 const crypto = require('crypto');
+const nodemailer = require('nodemailer');
 const { connectDB, Event, Registration, ensureSeedEvents, mongoose } = require('./db');
 
 const PORT = process.env.PORT || 8000;
@@ -168,6 +169,114 @@ function adminCookie(token, maxAge) {
   return `${ADMIN_SESSION_COOKIE}=${token}; HttpOnly; SameSite=Strict; Path=/; Max-Age=${maxAge}${secure}`;
 }
 
+function escapeHtml(value) {
+  return String(value).replace(/[&<>"']/g, character => ({
+    '&': '&amp;',
+    '<': '&lt;',
+    '>': '&gt;',
+    '"': '&quot;',
+    "'": '&#39;'
+  })[character]);
+}
+
+async function sendRegistrationNotifications(registration) {
+  const status = { ...(registration.notificationStatus || {}) };
+
+  if (status.email !== 'sent') {
+    const { SMTP_HOST, SMTP_PORT, SMTP_USER, SMTP_PASS, SMTP_FROM } = process.env;
+    if (!SMTP_HOST || !SMTP_USER || !SMTP_PASS || !SMTP_FROM) {
+      status.email = 'not_configured';
+    } else {
+      try {
+        const transporter = nodemailer.createTransport({
+          host: SMTP_HOST,
+          port: Number(SMTP_PORT || 587),
+          secure: process.env.SMTP_SECURE === 'true',
+          auth: { user: SMTP_USER, pass: SMTP_PASS }
+        });
+        const name = escapeHtml(registration.name);
+        const eventName = escapeHtml(registration.eventName);
+        const ticketId = escapeHtml(registration.id);
+        const fee = escapeHtml(registration.fee);
+        await transporter.sendMail({
+          from: SMTP_FROM,
+          to: registration.email,
+          subject: `${CONFIG.fest} registration received`,
+          text: `Hi ${registration.name}, your registration for ${registration.eventName} has been received. Ticket ID: ${registration.id}. Registration fee: ₹${registration.fee}. Payment details may be checked by the event organizers. Please keep your ticket ID for check-in.`,
+          html: `<p>Hi ${name},</p><p>Your registration for <b>${eventName}</b> has been received.</p><p>Ticket ID: <b>${ticketId}</b><br>Registration fee: ₹${fee}</p><p>Payment details may be checked by the event organizers. Please keep your ticket ID for check-in.</p>`
+        });
+        status.email = 'sent';
+      } catch (error) {
+        status.email = 'failed';
+        console.error('Could not send registration confirmation email:', error.message);
+      }
+    }
+  }
+
+  if (status.whatsapp !== 'sent') {
+    if (!registration.whatsappConsent) {
+      status.whatsapp = 'opted_out';
+    } else {
+      const {
+        WHATSAPP_PHONE_NUMBER_ID,
+        WHATSAPP_ACCESS_TOKEN,
+        WHATSAPP_TEMPLATE_NAME,
+        WHATSAPP_TEMPLATE_LANGUAGE
+      } = process.env;
+      if (!WHATSAPP_PHONE_NUMBER_ID || !WHATSAPP_ACCESS_TOKEN || !WHATSAPP_TEMPLATE_NAME) {
+        status.whatsapp = 'not_configured';
+      } else {
+        try {
+          const phone = String(registration.phone || '').replace(/\D/g, '');
+          if (!/^[6-9]\d{9}$/.test(phone)) {
+            throw new Error('Registration phone number is not a valid 10-digit Indian mobile number.');
+          }
+          const response = await fetch(
+            `https://graph.facebook.com/${process.env.WHATSAPP_API_VERSION || 'v23.0'}/${WHATSAPP_PHONE_NUMBER_ID}/messages`,
+            {
+              method: 'POST',
+              headers: {
+                Authorization: `Bearer ${WHATSAPP_ACCESS_TOKEN}`,
+                'Content-Type': 'application/json'
+              },
+              signal: AbortSignal.timeout(10000),
+              body: JSON.stringify({
+                messaging_product: 'whatsapp',
+                recipient_type: 'individual',
+                to: `91${phone}`,
+                type: 'template',
+                template: {
+                  name: WHATSAPP_TEMPLATE_NAME,
+                  language: { code: WHATSAPP_TEMPLATE_LANGUAGE || 'en_US' },
+                  components: [{
+                    type: 'body',
+                    parameters: [
+                      { type: 'text', text: String(registration.name) },
+                      { type: 'text', text: String(registration.eventName) },
+                      { type: 'text', text: String(registration.id) },
+                      { type: 'text', text: String(registration.fee) }
+                    ]
+                  }]
+                }
+              })
+            }
+          );
+          if (!response.ok) {
+            const details = await response.text();
+            throw new Error(`WhatsApp API returned ${response.status}: ${details}`);
+          }
+          status.whatsapp = 'sent';
+        } catch (error) {
+          status.whatsapp = 'failed';
+          console.error('Could not send WhatsApp registration confirmation:', error.message);
+        }
+      }
+    }
+  }
+
+  return status;
+}
+
 function checkAdminLoginLimit(req) {
   const ip = req.socket.remoteAddress || 'unknown';
   const now = Date.now();
@@ -313,8 +422,16 @@ const server = http.createServer(async (req, res) => {
 
     if (pathname === '/api/register' && method === 'POST') {
       const body = await readBody(req);
-      if (!body.eventId || !body.name || !body.email || !body.roll) {
-        return sendJson(res, 400, { error: 'Missing required fields (eventId, name, email, roll)' });
+      const email = String(body.email || '').trim();
+      const phone = String(body.phone || '').trim();
+      if (!body.eventId || !body.name || !email || !body.roll || !phone) {
+        return sendJson(res, 400, { error: 'Missing required fields (eventId, name, email, phone, roll)' });
+      }
+      if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
+        return sendJson(res, 400, { error: 'A valid email address is required.' });
+      }
+      if (!/^[6-9]\d{9}$/.test(phone.replace(/[\s-]/g, ''))) {
+        return sendJson(res, 400, { error: 'A valid 10-digit Indian mobile number is required.' });
       }
 
       const events = await getEvents();
@@ -335,8 +452,9 @@ const server = http.createServer(async (req, res) => {
         eventId: body.eventId,
         eventName: targetEvent.name,
         name: String(body.name).trim(),
-        email: String(body.email).trim(),
-        phone: String(body.phone || '').trim(),
+        email,
+        phone,
+        whatsappConsent: body.whatsappConsent === true,
         roll: String(body.roll).trim().toUpperCase(),
         dept: String(body.dept || ''),
         year: String(body.year || ''),
@@ -395,6 +513,9 @@ const server = http.createServer(async (req, res) => {
         found.paymentTime = new Date();
         await found.save();
 
+        found.notificationStatus = await sendRegistrationNotifications(found);
+        await found.save();
+
         return sendJson(res, 200, {
           success: true,
           registration: found.toObject(),
@@ -411,6 +532,9 @@ const server = http.createServer(async (req, res) => {
       found.utr = String(body.utr).trim();
       found.status = 'Confirmed (Verified)';
       found.paymentTime = new Date().toISOString();
+      await saveRegistrations(regs);
+
+      found.notificationStatus = await sendRegistrationNotifications(found);
       await saveRegistrations(regs);
 
       return sendJson(res, 200, {

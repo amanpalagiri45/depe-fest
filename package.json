@@ -26,6 +26,7 @@
   "dependencies": {
     "dotenv": "^16.4.7",
     "jspdf": "^4.2.1",
-    "mongoose": "^8.8.4"
+    "mongoose": "^8.8.4",
+    "nodemailer": "^10.1.0"
   }
 }

@@ -1164,6 +1164,10 @@ function openForm(id) {
         ${F('email', 'Email Address', '<input id="email" name="email" type="email" autocomplete="email" placeholder="name@college.edu">')}
         ${F('phone', 'Phone / WhatsApp Number', '<input id="phone" name="phone" type="tel" autocomplete="tel" placeholder="10-digit number">')}
       </div>
+      <label class="whatsapp-consent" for="whatsappConsent">
+        <input id="whatsappConsent" name="whatsappConsent" type="checkbox">
+        <span>I agree to receive my registration confirmation on WhatsApp.</span>
+      </label>
       <div class="row2">
         ${F('roll', 'College Roll Number / ID', '<input id="roll" name="roll" placeholder="e.g. 22AI012">')}
         ${F('dept', 'Department / Branch', sel('dept', DEPTS, 'Select department'))}
@@ -1236,6 +1240,7 @@ function formSubmit(e) {
       name: data.name.trim(),
       email: data.email.trim(),
       phone: data.phone.trim(),
+      whatsappConsent: data.whatsappConsent === 'on',
       roll: data.roll.trim().toUpperCase(),
       dept: data.dept,
       year: data.year,
@@ -1347,6 +1352,19 @@ function showPay(reg) {
 /* ---- Confirmation & Ticket View ---- */
 function showDone(reg, fresh = true) {
   const e = ev(reg.eventId);
+  const notificationLabels = {
+    sent: 'Sent successfully.',
+    failed: 'Could not send. Please contact the fest team.',
+    not_configured: 'Not configured on the server yet.',
+    opted_out: 'Not sent — WhatsApp opt-in was not selected.'
+  };
+  const notificationSummary = fresh && reg.notificationStatus
+    ? `<section class="notification-summary" aria-live="polite">
+        <h2>Confirmation messages</h2>
+        <p><b>Email:</b> ${notificationLabels[reg.notificationStatus.email] || 'Status unavailable.'}</p>
+        <p><b>WhatsApp:</b> ${notificationLabels[reg.notificationStatus.whatsapp] || 'Status unavailable.'}</p>
+      </section>`
+    : '';
 
   $('#doneBox').innerHTML = `
     ${
@@ -1360,6 +1378,8 @@ function showDone(reg, fresh = true) {
           </div>`
         : `<div class="done-h"><h1>Your Ticket</h1></div>`
     }
+
+    ${notificationSummary}
 
     <article class="ticket" id="festTicket" style="--c:${e.c};--on:${e.on}">
       <div class="tk-head">
@@ -1508,11 +1528,18 @@ document.addEventListener('DOMContentLoaded', () => {
   $('#fest').textContent = CONFIG.fest;
   $('#college').textContent = 'DEPT OF AI AND ML';
   const heroTitle = $('#heroT');
-  heroTitle.replaceChildren(document.createTextNode(`${CONFIG.fest} `));
+  const heroLogo = document.createElement('img');
+  heroLogo.className = 'hero-title-logo';
+  heroLogo.src = '/assets/aiml-department-logo.png';
+  heroLogo.alt = 'MITS AIML Department emblem';
+  const heroTitleCopy = document.createElement('span');
+  heroTitleCopy.className = 'hero-title-copy';
+  heroTitleCopy.append(document.createTextNode(`${CONFIG.fest} `));
   const heroVersion = document.createElement('span');
   heroVersion.className = 'hero-version';
   heroVersion.textContent = '2.0';
-  heroTitle.append(heroVersion);
+  heroTitleCopy.append(heroVersion);
+  heroTitle.replaceChildren(heroLogo, heroTitleCopy);
   $('#foot').textContent = CONFIG.college;
   $('#footFest').textContent = CONFIG.fest;
 

@@ -43,6 +43,11 @@ const RegistrationSchema = new mongoose.Schema(
     name: String,
     email: String,
     phone: String,
+    whatsappConsent: { type: Boolean, default: false },
+    notificationStatus: {
+      email: String,
+      whatsapp: String
+    },
     roll: String,
     dept: String,
     year: String,
